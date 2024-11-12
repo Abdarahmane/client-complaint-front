@@ -1,6 +1,6 @@
 <template>
   <div class="priority">
-    <h1>Gestion des Priorités</h1>
+    
     <!-- Pass priorities directly from the store -->
     <ListPriority :priorities="priorities" @priority-added="handlePriorityAdded" @priority-updated="handlePriorityUpdated" />
     <p v-if="error" class="error">{{ error }}</p>
@@ -9,7 +9,7 @@
 
 <script>
 import ListPriority from './ListPriority.vue';
-import { usePriorityStore } from '../../store/priority';
+import { usePriorityStore } from '../../store/priorityStore';
 
 export default {
   name: 'Priority',

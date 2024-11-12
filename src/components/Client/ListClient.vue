@@ -1,7 +1,8 @@
 <template>
-  <div class="list-client p-4 bg-light rounded shadow-sm">
-    <h2 class="text-center mb-4">Liste des Clients</h2>
+  <div class="list-client p-4 bg-custom-white rounded shadow-container">
+  <h2 class="text-center mb-4 text-custom-dark">Liste des Clients</h2>
 
+    <!-- Recherche et ajout de client -->
     <div class="d-flex justify-content-between align-items-center mb-4">
       <router-link to="/client/add" class="btn btn-success shadow-sm">
         <i class="fas fa-plus"></i> Ajouter un Client
@@ -12,7 +13,7 @@
           v-model="searchQuery" 
           class="form-control me-2 rounded-pill shadow-sm" 
           placeholder="Rechercher un client..." 
-          style="width: 300px;"
+          style="width: 80%;"
         />
         <button class="btn btn-outline-secondary shadow-sm" @click="searchClient">
           <i class="fas fa-search"></i>
@@ -20,6 +21,7 @@
       </div>
     </div>
 
+    <!-- Table des clients avec ombre -->
     <div class="table-responsive">
       <table class="table table-hover table-striped align-middle shadow-sm">
         <thead class="bg-primary text-white">
@@ -41,13 +43,13 @@
             <td>{{ client.address }}</td>
             <td>
               <router-link 
-                :to="`/client/detail/${client.id}`" 
+                :to="`/home/client/detail/${client.id}`" 
                 class="btn btn-primary btn-sm shadow-sm"
               >
                 <i class="fas fa-eye"></i> 
               </router-link>
               <router-link 
-                :to="`/client/update/${client.id}`" 
+                :to="`/home/client/update/${client.id}`" 
                 class="btn btn-info btn-sm shadow-sm ms-2"
               >
                 <i class="fas fa-edit"></i> 
@@ -139,5 +141,14 @@ export default {
 }
 h2 {
   font-weight: bold;
+}
+.table-responsive {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+.shadow-container {
+  background-color: #f8f9fa;
+  width: 80%; /* Largeur à 80% */
+  margin: 0 auto; /* Centrer le conteneur */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre autour du conteneur */
 }
 </style>

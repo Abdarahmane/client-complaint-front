@@ -1,7 +1,7 @@
 <template>
   <div class="add-category p-4 bg-custom-white rounded shadow-sm position-relative">
     <!-- Bouton de retour -->
-    <router-link to="/category/list" class="btn btn-secondary position-absolute" style="top: 20px; right: 20px;">
+    <router-link to="/category/list" class="btn btn-secondary back-button">
       <i class="fas fa-arrow-left"></i> Retour
     </router-link>
 
@@ -51,32 +51,56 @@ export default {
 
 <style scoped>
 /* Styles pour le composant AddCategory avec des couleurs personnalisées */
+.add-category {
+  max-width: 500px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #f8f9fa; /* Couleur de fond personnalisée */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
 .bg-custom-white {
   background-color: #f8f9fa;
 }
+
 .text-custom-dark {
   color: #343a40;
 }
+
 .btn-custom-primary {
   background-color: #007bff;
   color: white;
   border: none;
 }
+
 .btn-secondary {
-  background-color: #6c757d; /* Couleur pour le bouton retour */
+  background-color: #007bff; /* Couleur pour le bouton retour */
   color: white;
   border: none;
 }
+
+/* Style pour le bouton de retour aligné en bas à droite */
+.back-button {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+}
+
 .shadow-sm {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
+
 .form-control {
   border: 1px solid #ced4da;
   transition: border-color 0.3s;
 }
+
 .form-control:focus {
   border-color: #007bff;
 }
+
 h3 {
   font-weight: bold;
 }

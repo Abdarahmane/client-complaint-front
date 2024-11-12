@@ -1,19 +1,40 @@
 <template>
   <div class="detail-user">
     <h2>Détails de l'Utilisateur</h2>
+    
     <div class="user-info" v-if="user">
-      <p><strong>ID :</strong> <span>{{ user.id }}</span></p>
-      <p><strong>Email :</strong> <span>{{ user.email }}</span></p>
-      <p><strong>Rôle :</strong> <span>{{ user.role }}</span></p>
+      <form class="row d-flex flex-column">
+        <div class="col-md-6 form-group">
+          <label class="form-label">ID</label>
+          <p>{{ user.id }}</p>
+        </div>
+        <div class="col-md-6 form-group">
+          <label class="form-label">Nom</label>
+          <p>{{ user.name }}</p>
+        </div>
+        <div class="col-md-6 form-group">
+          <label class="form-label">Email</label>
+          <p>{{ user.email }}</p>
+        </div>
+        <div class="col-md-6 form-group">
+          <label class="form-label">Rôle</label>
+          <p>{{ user.role }}</p>
+        </div>
+
+        <!-- Bouton centré en bas -->
+        <div class="col-12 text-center mt-auto">
+          <button @click="goBack" class="btn btn-outline-primary mb-4">
+            <i class="fas fa-arrow-left"></i> Retour
+          </button>
+        </div>
+      </form>
     </div>
-    <button class="btn btn-secondary mt-3" @click="goBack">
-      <i class="fas fa-arrow-left"></i> Retour
-    </button>
   </div>
 </template>
 
 <script>
 import axios from 'axios';
+import { useAuthStore } from '../../store/authStore';
 
 export default {
   data() {
@@ -24,15 +45,20 @@ export default {
   methods: {
     async fetchUser() {
       const userId = this.$route.params.id;
+      const auth = useAuthStore();
       try {
-        const response = await axios.get(`http://localhost:3000/api/users/${userId}`);
+        const response = await axios.get(`http://localhost:3000/api/users/${userId}`, {
+          headers: {
+            Authorization: `Bearer ${auth.token}`
+          }
+        });
         this.user = response.data;
       } catch (error) {
-        console.error('Erreur lors de la récupération des détails de l\'utilisateur:', error);
+        console.error('Erreur lors de la récupération des détails de l’utilisateur:', error);
       }
     },
     goBack() {
-      this.$router.go(-1);
+      this.$router.push('/user/list');
     }
   },
   created() {
@@ -43,16 +69,16 @@ export default {
 
 <style scoped>
 .detail-user {
-  max-width: 450px;
+  max-width: 500px;
   margin: 30px auto;
-  padding: 25px;
+  padding: 20px;
   background-color: #f9f9f9;
-  border-radius: 10px;
+  border-radius: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 h2 {
-  font-size: 22px;
+  font-size: 24px;
   color: #333;
   text-align: center;
   margin-bottom: 20px;
@@ -64,34 +90,56 @@ h2 {
   line-height: 1.6;
 }
 
-.user-info p {
-  margin: 12px 0;
+.user-info .form-group {
+  margin-bottom: 15px;
 }
 
-.user-info strong {
+.form-label {
+  font-size: 18px; /* Augmenter la taille de la police des labels */
+  font-weight: 600;
+  color: #6c757d; /* Gris pour les titres */
+}
+
+p {
+  font-size: 16px;
   color: #333;
 }
 
-.btn-secondary {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: #6c757d;
+.btn {
+  background-color: #5c85d6;
   border: none;
   color: #fff;
-  border-radius: 5px;
-  padding: 10px;
+  padding: 10px 20px;
+  font-size: 16px;
   font-weight: bold;
+  border-radius: 4px;
   cursor: pointer;
+  width: auto;
   transition: background-color 0.3s;
-  width: 100%;
 }
 
-.btn-secondary:hover {
-  background-color: #5a6268;
+.btn:hover {
+  background-color: #486cb0;
 }
 
-.btn i {
-  margin-right: 8px;
+.btn-outline-secondary {
+  background-color: transparent;
+  border: 1px solid #5c85d6;
+  color: #5c85d6;
+  padding: 10px 20px;
+  cursor: pointer;
+}
+
+.btn-outline-secondary:hover {
+  background-color: #5c85d6;
+  color: white;
+}
+
+.mb-4 {
+  margin-bottom: 1.5rem;
+}
+
+.text-center {
+  margin-bottom: 20px;
 }
 </style>

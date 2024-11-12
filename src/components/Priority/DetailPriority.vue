@@ -66,13 +66,14 @@ export default {
 }
 
 .btn-outline-secondary {
-  border: 1px solid #007bff; /* Couleur de la bordure du bouton de retour */
-  color: #007bff; /* Couleur du texte du bouton de retour */
+  border: none; /* Couleur de la bordure du bouton de retour */
+  color: white; /* Couleur du texte du bouton de retour */
   padding: 10px 20px;
   font-size: 16px;
   border-radius: 4px;
   cursor: pointer;
   transition: background-color 0.3s, color 0.3s;
+  background-color: #007bff;
 }
 
 .btn-outline-secondary:hover {

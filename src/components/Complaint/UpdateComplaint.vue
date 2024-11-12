@@ -1,57 +1,71 @@
 <template>
-  <div class="update-complaint p-4 bg-light rounded shadow-sm">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <h2 class="font-weight-bold">Modifier une Réclamation</h2>
-      <button @click="goBack" class="btn btn-secondary">Retour</button>
+  <div class="d-flex justify-content-center align-items-center vh-100">
+    <div class="update-complaint p-4 bg-light rounded shadow-sm">
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-center">Modifier une Réclamation</h2>
+       
+      </div>
+      <form @submit.prevent="updateComplaint">
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="description" class="form-label">Description</label>
+            <textarea v-model="complaint.description" id="description" class="form-control" required></textarea>
+          </div>
+          <div class="col-md-6">
+            <label for="soumission_date" class="form-label">Date de Soumission</label>
+            <input v-model="complaint.soumission_date" id="soumission_date" type="date" class="form-control" required />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="statut" class="form-label">Statut</label>
+            <select v-model="complaint.statut" id="statut" class="form-select" required>
+              <option value="En attente">En attente</option>
+              <option value="Résolu">Résolu</option>
+              <option value="Rejeté">Rejeté</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="resolved_date" class="form-label">Date de Résolution</label>
+            <input v-model="complaint.resolved_date" id="resolved_date" type="date" class="form-control" />
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="priorityId" class="form-label">Priorité</label>
+            <select v-model="complaint.priorityId" id="priorityId" class="form-select" required>
+              <option value="">Sélectionnez une priorité</option>
+              <option v-for="priority in priorities" :key="priority.id" :value="priority.id">{{ priority.name }}</option>
+            </select>
+          </div>
+          <div class="col-md-6">
+            <label for="categoryId" class="form-label">Catégorie</label>
+            <select v-model="complaint.categoryId" id="categoryId" class="form-select" required>
+              <option value="">Sélectionnez une catégorie</option>
+              <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mb-3">
+          <div class="col-md-6">
+            <label for="clientId" class="form-label">Client</label>
+            <select v-model="complaint.clientId" id="clientId" class="form-select" required>
+              <option value="">Sélectionnez un client</option>
+              <option v-for="client in clients" :key="client.id" :value="client.id">{{ client.name }}</option>
+            </select>
+          </div>
+        </div>
+<div class="d-flex justify-content-between mt-3">
+  <button type="submit" class="btn btn-primary">Enregistrer</button>
+  <button @click="goBack" class="btn btn-primary">Retour</button>
+</div>
+
+
+      </form>
     </div>
-    <form @submit.prevent="updateComplaint">
-      <div class="mb-3">
-        <label for="id" class="form-label">ID</label>
-        <input v-model="complaint.id" id="id" class="form-control" readonly />
-      </div>
-      <div class="mb-3">
-        <label for="description" class="form-label">Description</label>
-        <textarea v-model="complaint.description" id="description" class="form-control" required></textarea>
-      </div>
-      <div class="mb-3">
-        <label for="soumission_date" class="form-label">Date de Soumission</label>
-        <input v-model="complaint.soumission_date" id="soumission_date" type="date" class="form-control" required />
-      </div>
-      <div class="mb-3">
-        <label for="statut" class="form-label">Statut</label>
-        <select v-model="complaint.statut" id="statut" class="form-select" required>
-          <option value="En attente">En attente</option>
-          <option value="Résolu">Résolu</option>
-          <option value="Rejeté">Rejeté</option>
-        </select>
-      </div>
-      <div class="mb-3">
-        <label for="resolved_date" class="form-label">Date de Résolution</label>
-        <input v-model="complaint.resolved_date" id="resolved_date" type="date" class="form-control" />
-      </div>
-      <div class="mb-3">
-        <label for="priorityId" class="form-label">Priorité</label>
-        <select v-model="complaint.priorityId" id="priorityId" class="form-select" required>
-          <option value="">Sélectionnez une priorité</option>
-          <option v-for="priority in priorities" :key="priority.id" :value="priority.id">{{ priority.name }}</option>
-        </select>
-      </div>
-      <div class="mb-3">
-        <label for="categoryId" class="form-label">Catégorie</label>
-        <select v-model="complaint.categoryId" id="categoryId" class="form-select" required>
-          <option value="">Sélectionnez une catégorie</option>
-          <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
-        </select>
-      </div>
-      <div class="mb-3">
-        <label for="clientId" class="form-label">Client</label>
-        <select v-model="complaint.clientId" id="clientId" class="form-select" required>
-          <option value="">Sélectionnez un client</option>
-          <option v-for="client in clients" :key="client.id" :value="client.id">{{ client.name }}</option>
-        </select>
-      </div>
-      <button type="submit" class="btn btn-primary">Enregistrer</button>
-    </form>
   </div>
 </template>
 
@@ -66,7 +80,7 @@ export default {
         description: '',
         soumission_date: '',
         statut: 'En attente',
-        resolved_date: null,
+        resolved_date: '',
         priorityId: null,
         categoryId: null,
         clientId: null
@@ -111,41 +125,58 @@ export default {
       }
     },
     async loadComplaint() {
-  const id = this.$route.params.id;
-  try {
-    const response = await axios.get(`http://localhost:3000/api/complaints/${id}`);
-    const data = response.data;
-
-    this.complaint = {
-      ...data,
-      submissionDate: data.submissionDate ? new Date(data.submissionDate).toISOString().split('T')[0] : '',
-      resolutionDate: data.resolutionDate ? new Date(data.resolutionDate).toISOString().split('T')[0] : '' // Assurez-vous que c'est une chaîne vide si non défini
-    };
-  } catch (error) {
-    console.error('Erreur lors de la récupération de la réclamation :', error);
-  }
-},
-
-    async updateComplaint() {
+      const id = this.$route.params.id;
       try {
-        await axios.put(`http://localhost:3000/api/complaints/${this.complaint.id}`, {
-          ...this.complaint,
-          soumission_date: this.complaint.soumission_date, // Assurez-vous d'envoyer la date sous la bonne forme
-          resolved_date: this.complaint.resolved_date // Assurez-vous d'envoyer la date sous la bonne forme
-        });
-        alert('Réclamation mise à jour avec succès.');
-        this.$router.push('/complaints'); // Redirection vers la liste des réclamations
+        const response = await axios.get(`http://localhost:3000/api/complaints/${id}`);
+        const data = response.data;
+        this.complaint = {
+          ...data,
+          soumission_date: data.soumission_date ? new Date(data.soumission_date).toISOString().split('T')[0] : '',
+          resolved_date: data.resolved_date ? new Date(data.resolved_date).toISOString().split('T')[0] : ''
+        };
       } catch (error) {
-        console.error('Erreur lors de la mise à jour de la réclamation :', error);
+        console.error('Erreur lors de la récupération de la réclamation :', error);
       }
+    },
+    async updateComplaint() {
+  try {
+    const soumissionDateISO = new Date(this.complaint.soumission_date).toISOString();
+    const resolvedDateISO = this.complaint.resolved_date ? new Date(this.complaint.resolved_date).toISOString() : null;
+
+    const response = await axios.put(`http://localhost:3000/api/complaints/${this.complaint.id}`, {
+      description: this.complaint.description,
+      soumission_date: soumissionDateISO,
+      statut: this.complaint.statut,
+      resolved_date: resolvedDateISO,
+      priorityId: this.complaint.priorityId,
+      categoryId: this.complaint.categoryId,
+      clientId: this.complaint.clientId
+    });
+
+    if (response.status === 200) {
+      alert('Réclamation mise à jour avec succès.');
+      this.$router.push('/complaint/list');
     }
+  } catch (error) {
+    console.error('Erreur lors de la mise à jour de la réclamation :', error);
+    alert('Erreur lors de la mise à jour de la réclamation.');
+  }
+}
+
+
   }
 };
 </script>
 
 <style scoped>
+.update-complaint {
+  width: 60%;
+  max-width: 600px;
+}
 .bg-light {
   background-color: #f8f9fa !important;
+  padding: 20px;
+  border-radius: 15px;
 }
 h2 {
   font-weight: bold;
@@ -155,5 +186,6 @@ h2 {
 }
 .form-label {
   font-weight: bold;
+  color:  gray;
 }
 </style>

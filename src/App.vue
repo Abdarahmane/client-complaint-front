@@ -1,16 +1,16 @@
 <template>
   <div id="app" class="d-flex">
-    <!-- Sidebar -->
-    <aside class="sidebar">
+    <!-- Conditional Sidebar -->
+    <aside v-if="isAuthenticated" class="sidebar">
       <div class="sidebar-header">
         <h2>Menu</h2>
       </div>
       <ul class="nav flex-column">
-        <li class="nav-item">
+        <!-- <li class="nav-item">
           <router-link to="/" class="nav-link">
             <i class="fas fa-home"></i> Accueil
           </router-link>
-        </li>
+        </li> -->
         <li class="nav-item">
           <router-link to="/user" class="nav-link">
             <i class="fas fa-users"></i> Utilisateurs
@@ -49,9 +49,10 @@
       </ul>
     </aside>
 
-    <!-- Main Content -->
-    <div class="content">
-      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <!-- Conditional Main Content -->
+    <div :class="isAuthenticated ? 'content' : 'login-content'">
+      <!-- Fixed Navbar -->
+      <nav v-if="isAuthenticated" class="navbar navbar-expand-lg navbar-light bg-light fixed-top">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">Client Complaints Manager</a>
           <button
@@ -66,9 +67,7 @@
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav me-auto">
-              <!-- Autres éléments de la barre de navigation peuvent aller ici si nécessaire -->
-            </ul>
+            <ul class="navbar-nav me-auto"></ul>
             <div class="d-flex align-items-center">
               <select class="form-select" aria-label="Langue">
                 <option selected>Langue</option>
@@ -81,7 +80,8 @@
         </div>
       </nav>
 
-      <main class="main-content">
+      <!-- Main Content or Login Page -->
+      <main class=" container-fluid p-2">
         <router-view />
       </main>
     </div>
@@ -89,15 +89,26 @@
 </template>
 
 <script>
+import { computed } from 'vue';
+import { useRouter } from 'vue-router';
+
 export default {
   name: 'App',
+  setup() {
+    const router = useRouter();
+
+    const isAuthenticated = computed(() => {
+      return !!localStorage.getItem('authToken');
+    });
+
+    return { isAuthenticated };
+  },
   methods: {
     logout() {
-      // Logique pour déconnexion
-      console.log("Déconnexion");
+      localStorage.removeItem('authToken');
+      this.$router.push('/login');
     },
     changeUser() {
-      // Logique pour changer d'utilisateur
       console.log("Changer d'utilisateur");
     },
   },
@@ -105,12 +116,11 @@ export default {
 </script>
 
 <style>
-/* Ajoutez vos styles globaux ici */
 body {
   font-family: 'Helvetica Neue', Arial, sans-serif;
   margin: 0;
   padding: 0;
-  background-color: #f0f4f8; /* Couleur de fond moderne */
+  background-color: #f0f4f8;
 }
 
 #app {
@@ -118,13 +128,13 @@ body {
 }
 
 .sidebar {
-  width: 240px; /* Largeur de la sidebar */
-  background-color: #343a40; /* Couleur sombre pour la sidebar */
-  color: #ffffff; /* Couleur du texte */
+  width: 240px;
+  background-color: #343a40;
+  color: #ffffff;
   padding: 20px;
   position: fixed;
   height: 100%;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2); /* Ombre à droite */
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
 }
 
 .sidebar-header {
@@ -133,14 +143,14 @@ body {
 }
 
 .sidebar .nav-link {
-  color: #ffffff; /* Couleur des liens dans la sidebar */
-  padding: 10px 15px; /* Espacement interne */
-  border-radius: 5px; /* Coins arrondis */
-  transition: background-color 0.3s; /* Transition pour le hover */
+  color: #ffffff;
+  padding: 10px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s;
 }
 
 .sidebar .nav-link:hover {
-  background-color: #495057; /* Couleur de fond au survol */
+  background-color: #495057;
 }
 
 .logout-button, .change-user-button {
@@ -148,52 +158,48 @@ body {
   border: none;
   color: #ffffff;
   cursor: pointer;
-  padding: 10px 15px; /* Espacement interne */
+  padding: 10px 15px;
   text-align: left;
   width: 100%;
 }
 
 .logout-button:hover, .change-user-button:hover {
-  background-color: #495057; /* Couleur de fond au survol pour les boutons */
+  background-color: #495057;
 }
 
 .content {
-  margin-left: 240px; /* Pour compenser la largeur de la sidebar */
+  margin-left: 240px;
+  padding-top: 56px; /* Offset for fixed navbar */
+  background-color: #ffffff;
+  min-height: 100vh;
+}
+
+.login-content {
   flex-grow: 1;
-  background-color: #ffffff; /* Fond blanc pour le contenu principal */
-  min-height: 100vh; /* Minimum de hauteur pour le contenu */
-  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.1); /* Ombre intérieure pour le contenu */
-  padding: 20px; /* Espacement interne */
+  min-height: 100vh;
+  background-color: #ffffff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .main-content {
-  padding: 20px; /* Padding pour le contenu principal */
+  padding: 20px;
 }
 
 .navbar {
-  margin-left: 0px; /* Supprime l'espace sous la navbar */
-}
-
-.navbar-logo {
-  width: 40px; /* Largeur du logo */
-  height: auto; /* Hauteur automatique pour garder les proportions */
-  margin-right: 10px; /* Espacement à droite du logo */
-}
-
-.navbar-brand {
-  font-weight: bold; /* Texte en gras pour le titre de la navbar */
+  z-index: 1000;
 }
 
 .form-select {
-  border-radius: 5px; /* Coins arrondis pour le select */
-  transition: border-color 0.3s; /* Effet de transition */
+  border-radius: 5px;
 }
 
 .form-select:focus {
-  border-color: #007bff; /* Couleur au focus */
+  border-color: #007bff;
 }
 
 i {
-  margin-right: 8px; /* Espacement pour les icônes */
+  margin-right: 8px;
 }
 </style>

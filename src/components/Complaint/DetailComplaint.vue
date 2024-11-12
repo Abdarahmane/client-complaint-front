@@ -1,33 +1,40 @@
 <template>
-  <div class="detail-complaint p-4 bg-light rounded shadow-sm">
-    <h2 class="text-center mb-4">Détails de la Réclamation</h2>
-    <div class="mb-3">
-      <strong>ID :</strong> {{ complaint.id }}
+  <div class="d-flex justify-content-center align-items-center">
+    <div class="detail-complaint p-4 bg-light rounded shadow-sm">
+      <h2 class="text-center mb-4">Détails de la Réclamation</h2>
+      <div class="grid-container">
+        <div><strong>ID :</strong></div>
+        <div>{{ complaint.id }}</div>
+
+        <div><strong>Description :</strong></div>
+        <div>{{ complaint.description }}</div>
+
+        <div><strong>Date de Soumission :</strong></div>
+        <div>{{ formatDate(complaint.soumission_date) }}</div>
+
+        <div><strong>Statut :</strong></div>
+        <div>{{ getStatus(complaint.statut) }}</div>
+
+        <div><strong>Date de Résolution :</strong></div>
+        <div>{{ formatDate(complaint.resolved_date) }}</div>
+
+        <div><strong>Priorité :</strong></div>
+        <div>{{ complaint.priorityId || 'Non définie' }}</div>
+
+        <div><strong>Catégorie :</strong></div>
+        <div>{{ complaint.categoryId || 'Non définie' }}</div>
+
+        <div><strong>Client ID :</strong></div>
+        <div>{{ complaint.clientId || 'Non défini' }}</div>
+      </div>
+      <div class="text-center mt-4">
+  <router-link to="/complaint" class="btn btn-primary">Retour</router-link>
+</div>
+
     </div>
-    <div class="mb-3">
-      <strong>Description :</strong> {{ complaint.description }}
-    </div>
-    <div class="mb-3">
-      <strong>Date de Soumission :</strong> {{ formatDate(complaint.soumission_date) }}
-    </div>
-    <div class="mb-3">
-      <strong>Statut :</strong> {{ getStatus(complaint.statut) }}
-    </div>
-    <div class="mb-3">
-      <strong>Date de Résolution :</strong> {{ formatDate(complaint.resolved_date) }}
-    </div>
-    <div class="mb-3">
-      <strong>Priorité :</strong> {{ complaint.priorityId || 'Non définie' }}
-    </div>
-    <div class="mb-3">
-      <strong>Catégorie :</strong> {{ complaint.categoryId || 'Non définie' }}
-    </div>
-    <div class="mb-3">
-      <strong>Client ID :</strong> {{ complaint.clientId || 'Non défini' }}
-    </div>
-    <router-link to="/complaint" class="btn btn-secondary">Retour à la liste des réclamations</router-link>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -85,8 +92,22 @@ export default {
 <style scoped>
 .detail-complaint {
   border: 1px solid #ced4da;
+  width: 100%;
+  max-width: 600px;
 }
+
+.d-flex {
+  min-height: 100vh;
+}
+
+.grid-container {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 10px;
+}
+
 strong {
   color: #343a40;
 }
 </style>
+

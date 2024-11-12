@@ -1,6 +1,6 @@
 <template>
   <div class="user">
-    <h1>Gestion des Utilisateurs</h1>
+ 
     <!-- Pass users directly from the store -->
     <ListUser :users="users" @user-added="handleUserAdded" @user-updated="handleUserUpdated" />
     <p v-if="error" class="error">{{ error }}</p>
@@ -9,7 +9,7 @@
 
 <script>
 import ListUser from './ListUser.vue';
-import { useUserStore } from '../../store/user';
+import { useUserStore } from '../../store/userStore';
 
 export default {
   name: 'User',

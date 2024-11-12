@@ -1,6 +1,6 @@
 <template>
   <div class="client">
-    <h1>Gestion des Clients</h1>
+    
     <!-- Pass clients directly from the store -->
     <ListClient :clients="clients" @client-added="handleClientAdded" @client-updated="handleClientUpdated" />
     <p v-if="error" class="error">{{ error }}</p>
@@ -9,7 +9,7 @@
 
 <script>
 import ListClient from './ListClient.vue';
-import { useClientStore } from '../../store/client';
+import { useClientStore } from '../../store/clientStore';
 
 export default {
   name: 'Client',

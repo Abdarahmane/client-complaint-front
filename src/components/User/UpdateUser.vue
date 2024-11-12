@@ -1,30 +1,45 @@
 <template>
-  <div class="update-user">
-    <h2>Modifier un Utilisateur</h2>
-    <!-- Bouton de retour -->
-    <button @click="goBack" class="btn btn-outline-secondary mb-4">
-      <i class="fas fa-arrow-left"></i> Retour
-    </button>
-    
-    <form @submit.prevent="updateUser">
-      <div class="form-group">
-        <label for="email" class="form-label">Email</label>
-        <input v-model="user.email" type="email" id="email" class="form-control" required />
-      </div>
-      <div class="form-group">
-        <label for="password" class="form-label">Mot de passe</label>
-        <input v-model="user.password" type="password" id="password" class="form-control" required />
-      </div>
-      <div class="form-group">
-        <label for="role" class="form-label">Rôle</label>
-        <select v-model="user.role" id="role" class="form-control" required>
-          <option value="" disabled>Choisissez un rôle</option>
-          <option value="admin">Administrateur</option>
-          <option value="employer">Employé</option>
-        </select>
-      </div>
-      <button type="submit" class="btn">Enregistrer</button>
-    </form>
+  <div class="container d-flex justify-content-center align-items-center">
+    <div class="card shadow-sm p-4" style="max-width: 500px; width: 100%; background-color: #f8f9fa;">
+      <h3 class="text-center mb-4">Modifier un Utilisateur</h3>
+
+      <!-- Formulaire de modification -->
+      <form @submit.prevent="updateUser">
+        <div class="mb-3">
+          <label for="name" class="form-label">Nom</label>
+          <input v-model="user.name" type="text" id="name" class="form-control" placeholder="Entrez le nom complet" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="email" class="form-label">Email</label>
+          <input v-model="user.email" type="email" id="email" class="form-control" placeholder="Entrez un email valide" required />
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Mot de passe (laisser vide pour ne pas changer)</label>
+          <input v-model="user.password" type="password" id="password" class="form-control" placeholder="Entrez un nouveau mot de passe" />
+        </div>
+
+        <div class="mb-3">
+          <label for="role" class="form-label">Rôle</label>
+          <select v-model="user.role" id="role" class="form-select" required>
+            <option value="" disabled>Choisissez un rôle</option>
+            <option value="admin">Administrateur</option>
+            <option value="employer">Employé</option>
+          </select>
+        </div>
+
+        <!-- Boutons d'action -->
+        <div class="d-flex justify-content-between mt-4">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Enregistrer
+          </button>
+          <button type="button" class="btn btn-primary" @click="goBack">
+            <i class="fas fa-arrow-left"></i> Retour
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
 </template>
 
@@ -35,7 +50,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      user: { id: '', email: '', password: '', role: '' }
+      user: { id: '', name: '', email: '', password: '', role: '' }
     };
   },
   setup() {
@@ -45,11 +60,22 @@ export default {
   methods: {
     async updateUser() {
       try {
-        const response = await axios.put(`http://localhost:3000/api/users/${this.user.id}`, this.user);
-        console.log('Utilisateur mis à jour avec succès:', response.data);
-        this.router.push('/user/list'); // Redirection vers la liste des utilisateurs
+        const dataToUpdate = {
+          name: this.user.name,
+          email: this.user.email,
+          role: this.user.role,
+        };
+
+        // Ajouter le mot de passe uniquement s'il a été modifié
+        if (this.user.password) {
+          dataToUpdate.password = this.user.password;
+        }
+
+        await axios.put(`http://localhost:3000/api/users/${this.user.id}`, dataToUpdate);
+        this.router.push('/user/list');
+        this.resetForm();
       } catch (error) {
-        console.error('Erreur lors de la mise à jour de l\'utilisateur:', error.response ? error.response.data : error.message);
+        console.error('Erreur lors de la mise à jour de l\'utilisateur :', error.response ? error.response.data : error.message);
       }
     },
     async fetchUser(userId) {
@@ -57,11 +83,14 @@ export default {
         const response = await axios.get(`http://localhost:3000/api/users/${userId}`);
         this.user = response.data;
       } catch (error) {
-        console.error('Erreur lors de la récupération de l\'utilisateur:', error.response ? error.response.data : error.message);
+        console.error('Erreur lors de la récupération de l\'utilisateur :', error.response ? error.response.data : error.message);
       }
     },
+    resetForm() {
+      this.user = { id: '', name: '', email: '', password: '', role: '' };
+    },
     goBack() {
-      this.router.push('/user/list'); // Navigation vers la liste des utilisateurs
+      this.router.push('/user/list');
     }
   },
   created() {
@@ -72,76 +101,35 @@ export default {
 </script>
 
 <style scoped>
-.update-user {
-  max-width: 500px;
-  margin: 30px auto;
-  padding: 20px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+.container {
+  min-height: 100vh;
 }
 
-h2 {
-  font-size: 24px;
+.card {
+  border-radius: 10px;
+}
+
+.text-center {
   color: #333;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.form-group {
-  margin-bottom: 15px;
-}
-
-.form-label {
-  font-size: 14px;
-  font-weight: 600;
-  color: #555;
-}
-
-.form-control {
-  background-color: #fff;
-  border: 1px solid #ccc;
-  color: #333;
-  padding: 10px;
-  border-radius: 4px;
-  width: 100%;
-  transition: border-color 0.3s;
-}
-
-.form-control:focus {
-  outline: none;
-  border-color: #5c85d6;
-  box-shadow: 0 0 8px rgba(92, 133, 214, 0.2);
 }
 
 .btn {
-  background-color: #5c85d6;
-  border: none;
-  color: #fff;
   padding: 10px 20px;
   font-size: 16px;
-  font-weight: bold;
-  border-radius: 4px;
-  cursor: pointer;
-  width: 100%;
-  transition: background-color 0.3s;
 }
 
-.btn:hover {
-  background-color: #486cb0;
+.btn-primary {
+  background-color: #007bff;
+  border: none;
 }
 
 .btn-outline-secondary {
-  background-color: transparent;
-  border: 1px solid #5c85d6;
-  color: #5c85d6;
-  padding: 10px 20px;
-  cursor: pointer;
-  width: auto;
+  border: 1px solid #007bff;
+  color: #007bff;
 }
 
 .btn-outline-secondary:hover {
-  background-color: #5c85d6;
-  color: white;
+  background-color: #007bff;
+  color: #fff;
 }
 </style>

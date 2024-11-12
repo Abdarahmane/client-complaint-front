@@ -1,5 +1,5 @@
 <template>
-  <div class="list-complaint p-4 bg-light rounded shadow-sm">
+  <div class="list-complaint p-4 bg-custom-white rounded shadow-container">
     <h2 class="text-center mb-4">Liste des Réclamations</h2>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
@@ -38,32 +38,33 @@
             <td colspan="6" class="text-center">Aucune réclamation disponible</td>
           </tr>
           <tr v-for="complaint in filteredComplaints" :key="complaint.id">
-            <td>{{ complaint.id }}</td>
-            <td>{{ complaint.description }}</td>
-            <td>{{ formatDate(complaint.soumission_date) }}</td>
-            <td>{{ getStatus(complaint.statut) }}</td>
-            <td>{{ formatDate(complaint.resolved_date) }}</td>
-            <td class="d-flex justify-content-center">
-              <router-link 
-                :to="`/complaint/detail/${complaint.id}`" 
-                class="btn btn-secondary btn-sm shadow-sm me-2"
-              >
-                <i class="fas fa-eye"></i> 
-              </router-link>
-              <router-link 
-                :to="`/complaint/update/${complaint.id}`" 
-                class="btn btn-info btn-sm shadow-sm me-2"
-              >
-                <i class="fas fa-edit"></i> 
-              </router-link>
-              <button 
-                class="btn btn-danger btn-sm shadow-sm" 
-                @click="confirmDeleteComplaint(complaint.id)"
-              >
-                <i class="fas fa-trash"></i> 
-              </button>
-            </td>
-          </tr>
+  <td>{{ complaint.id }}</td>
+  <td>{{ complaint.description }}</td>
+  <td>{{ formatDate(complaint.soumission_date) }}</td>
+  <td>{{ getStatus(complaint.statut) }}</td>
+  <td>{{ formatDate(complaint.resolved_date) }}</td>
+  <td class="d-flex justify-content-center">
+    <router-link 
+      :to="`/home/complaint/detail/${complaint.id}`" 
+      class="btn btn-secondary btn-sm shadow-sm me-2"
+    >
+      <i class="fas fa-eye"></i> 
+    </router-link>
+    <router-link 
+      :to="`/home/complaint/update/${complaint.id}`" 
+      class="btn btn-info btn-sm shadow-sm me-2"
+    >
+      <i class="fas fa-edit"></i> 
+    </router-link>
+    <button 
+      class="btn btn-danger btn-sm shadow-sm" 
+      @click="confirmDeleteComplaint(complaint.id)"
+    >
+      <i class="fas fa-trash"></i> 
+    </button>
+  </td>
+</tr>
+
         </tbody>
       </table>
       <div v-if="errorMessage" class="alert alert-danger">
@@ -96,16 +97,17 @@ export default {
   
   methods: {
     async fetchComplaints() {
-      try {
-        const response = await axios.get('http://localhost:3000/api/complaints');
-        this.complaints = response.data;
-        console.log('Réclamations récupérées:', this.complaints);
-      } catch (error) {
-        this.errorMessage = 'Erreur lors de la récupération des réclamations.';
-        console.error('Erreur lors de la récupération des réclamations:', error);
-      }
-    },
+  try {
+    const response = await axios.get('http://localhost:3000/api/complaints');
+    this.complaints = response.data;
+    console.log('Réclamations récupérées:', this.complaints); // Ajouté pour débogage
+  } catch (error) {
+    this.errorMessage = 'Erreur lors de la récupération des réclamations.';
+    console.error('Erreur lors de la récupération des réclamations:', error);
+  }
+},
 
+    
     debounceSearch() {
       clearTimeout(this.searchTimeout);
       this.searchTimeout = setTimeout(() => {
@@ -114,7 +116,7 @@ export default {
     },
     
     searchComplaint() {
-      this.filteredComplaints;
+      this.filteredComplaints; 
     },
 
     confirmDeleteComplaint(id) {
@@ -126,7 +128,7 @@ export default {
     async deleteComplaint(id) {
       try {
         await axios.delete(`http://localhost:3000/api/complaints/${id}`);
-        await this.fetchComplaints();
+        await this.fetchComplaints(); 
         alert('Réclamation supprimée avec succès.');
       } catch (error) {
         this.errorMessage = 'Erreur lors de la suppression de la réclamation.';
@@ -138,15 +140,16 @@ export default {
       return date ? new Date(date).toLocaleDateString('fr-FR', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'N/A';
     },
 
-    getStatus(status) {
-      const statuses = {
-        'En attente': 'En attente',
-        'Résolu': 'Résolu',
-        'En Cours': 'En Cours',
-        'Rejeté': 'Rejeté'
-      };
-      return statuses[status] || 'Statut Inconnu';
-    }
+   getStatus(statut) {
+  const statuses = {
+    'En attente': 'En attente',
+    'Résolu': 'Résolu',
+    'En Cours': 'En Cours',
+    'Rejeté': 'Rejeté'
+  };
+  return statuses[statut] || 'Statut Inconnu';
+}
+
   },
 
   created() {
@@ -183,5 +186,11 @@ h2 {
 }
 .alert {
   margin-top: 20px;
+}
+.shadow-container {
+  background-color: #f8f9fa;
+  width: 80%; /* Largeur à 80% */
+  margin: 0 auto; /* Centrer le conteneur */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre autour du conteneur */
 }
 </style>

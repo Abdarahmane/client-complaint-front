@@ -1,20 +1,19 @@
 <template>
   <div class="update-category p-4 bg-custom-white rounded shadow-sm position-relative">
     <!-- Bouton de retour -->
-    <router-link to="/category/list" class="btn btn-secondary position-absolute" style="top: 20px; right: 20px;">
+    <router-link to="/category/list" class="btn btn-secondary back-button">
       <i class="fas fa-arrow-left"></i> Retour
     </router-link>
 
-    <h2 class="text-custom-dark mb-4">Modifier une Catégorie</h2>
+    <h3 class="text-custom-dark mb-4">Modifier une Catégorie</h3>
     <form @submit.prevent="updateCategory">
       <div class="mb-3">
         <label for="name" class="form-label text-custom-dark">Nom</label>
         <input 
           v-model="category.name" 
-          type="text" 
           id="name" 
           class="form-control shadow-sm" 
-          placeholder="Entrez le nouveau nom de la catégorie" 
+          placeholder="Entrez le nom de la catégorie" 
           required 
         />
       </div>
@@ -31,63 +30,85 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      category: { name: '' }
+      category: { name: '' }, // Initialisation pour éviter une erreur dans v-model
     };
   },
   mounted() {
-    this.fetchCategory();
+    this.fetchCategory(); // Charger la catégorie actuelle
   },
   methods: {
     async fetchCategory() {
       try {
         const response = await axios.get(`http://localhost:3000/api/categories/${this.$route.params.id}`);
-        this.category = response.data; // Assuming the response data is the category object
+        this.category = response.data;
       } catch (error) {
-        console.error('Erreur lors de la récupération de la catégorie:', error);
+        console.error("Erreur lors de la récupération de la catégorie:", error);
       }
     },
     async updateCategory() {
       try {
         await axios.put(`http://localhost:3000/api/categories/${this.$route.params.id}`, this.category);
-        // Redirige vers la liste des catégories après la mise à jour
-        this.$router.push('/category/list');
+        this.$router.push('/category/list'); // Redirection après la mise à jour
       } catch (error) {
-        console.error('Erreur lors de la mise à jour de la catégorie:', error);
+        console.error("Erreur lors de la mise à jour de la catégorie:", error);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
 <style scoped>
-/* Styles pour le composant UpdateCategory */
+/* Styles alignés avec AddCategory.vue */
+.update-category {
+  max-width: 500px;
+  margin: 30px auto;
+  padding: 20px;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
 .bg-custom-white {
-  background-color: #f8f9fa; /* Fond blanc cassé */
+  background-color: #f8f9fa;
 }
+
 .text-custom-dark {
-  color: #343a40; /* Texte gris foncé */
+  color: #343a40;
 }
+
 .btn-custom-primary {
-  background-color: #007bff; /* Bleu primaire */
+  background-color: #007bff;
   color: white;
   border: none;
 }
+
 .btn-secondary {
-  background-color: #6c757d; /* Couleur pour le bouton retour */
+  background-color: #007bff;
   color: white;
   border: none;
 }
-.shadow-sm {
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); /* Ombre légère */
+
+.back-button {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
 }
+
+.shadow-sm {
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
 .form-control {
-  border: 1px solid #ced4da; /* Bordure gris clair */
+  border: 1px solid #ced4da;
   transition: border-color 0.3s;
 }
+
 .form-control:focus {
-  border-color: #007bff; /* Couleur de bordure bleu primaire lorsqu'il est focalisé */
+  border-color: #007bff;
 }
-h2 {
+
+h3 {
   font-weight: bold;
 }
 </style>

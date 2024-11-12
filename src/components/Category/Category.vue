@@ -1,6 +1,6 @@
 <template>
   <div class="category">
-    <h1>Gestion des Catégories</h1>
+   
     <!-- Pass categories directly from the store -->
     <ListCategory :categories="categories" @category-added="handleCategoryAdded" @category-updated="handleCategoryUpdated" />
     <p v-if="error" class="error">{{ error }}</p>
@@ -9,7 +9,7 @@
 
 <script>
 import ListCategory from './ListCategory.vue';
-import { useCategoryStore } from '../../store/category';
+import { useCategoryStore } from '../../store/categoryStore';
 
 export default {
   name: 'Category',
@@ -42,9 +42,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.category {
-  margin: 20px;
-}
-</style>

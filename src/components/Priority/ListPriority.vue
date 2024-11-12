@@ -1,6 +1,6 @@
 <template>
-  <div class="list-priority p-4 bg-light rounded shadow-sm">
-    <h2 class="text-center mb-4">Liste des Priorités</h2>
+  <div class="list-priority p-4 bg-custom-#f8f9fa rounded shadow-container">
+    <h2 class="text-center mb-4 text-custom-dark">Liste des Priorités</h2>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
       <router-link to="/priority/add" class="btn btn-success shadow-sm">
@@ -35,13 +35,13 @@
             <td>{{ priority.name }}</td>
             <td>
               <router-link 
-                :to="`/priority/detail/${priority.id}`" 
+                :to="`/home/priority/detail/${priority.id}`" 
                 class="btn btn-primary btn-sm shadow-sm"
               >
                 <i class="fas fa-eye"></i>
               </router-link>
               <router-link 
-                :to="`/priority/update/${priority.id}`" 
+                :to="`/home/priority/update/${priority.id}`" 
                 class="btn btn-info btn-sm shadow-sm ms-2"
               >
                 <i class="fas fa-edit"></i>
@@ -126,5 +126,12 @@ export default {
 }
 .bg-light {
   background-color: #f8f9fa !important;
+}
+.shadow-container {
+  background-color: #f8f9fa;
+  width: 80%; /* Largeur à 80% */
+  margin: 0 auto; /* Centrer le conteneur */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre autour du conteneur */
+  
 }
 </style>

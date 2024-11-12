@@ -1,6 +1,6 @@
 <template>
   <div class="complaint">
-    <h1>Gestion des Plaintes</h1>
+    <!-- <h1>Gestion des Plaintes</h1> -->
     <!-- Pass complaints directly from the store -->
     <ListComplaint :complaints="complaints" @complaint-added="handleComplaintAdded" @complaint-updated="handleComplaintUpdated" />
     <p v-if="error" class="error">{{ error }}</p>
@@ -9,7 +9,7 @@
 
 <script>
 import ListComplaint from './ListComplaint.vue';
-import { useComplaintStore } from '../../store/complaint';
+import { useComplaintStore } from '../../store/complaintStore';
 
 export default {
   name: 'Complaint',
