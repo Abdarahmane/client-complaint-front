@@ -140,28 +140,38 @@ export default {
     },
     async updateComplaint() {
   try {
-    const soumissionDateISO = new Date(this.complaint.soumission_date).toISOString();
-    const resolvedDateISO = this.complaint.resolved_date ? new Date(this.complaint.resolved_date).toISOString() : null;
+    // Validation des champs
+    if (this.complaint.resolved_date && new Date(this.complaint.resolved_date) < new Date(this.complaint.soumission_date)) {
+      alert('La date de résolution ne peut pas être antérieure à la date de soumission.');
+      return;
+    }
 
-    const response = await axios.put(`http://localhost:3000/api/complaints/${this.complaint.id}`, {
+    this.isLoading = true;
+
+    const payload = {
       description: this.complaint.description,
-      soumission_date: soumissionDateISO,
+      soumission_date: new Date(this.complaint.soumission_date).toISOString(),
       statut: this.complaint.statut,
-      resolved_date: resolvedDateISO,
+      resolved_date: this.complaint.resolved_date ? new Date(this.complaint.resolved_date).toISOString() : null,
       priorityId: this.complaint.priorityId,
       categoryId: this.complaint.categoryId,
-      clientId: this.complaint.clientId
-    });
+      clientId: this.complaint.clientId,
+    };
+
+    const response = await axios.put(`http://localhost:3000/api/complaints/${this.complaint.id}`, payload);
 
     if (response.status === 200) {
       alert('Réclamation mise à jour avec succès.');
       this.$router.push('/complaint/list');
     }
   } catch (error) {
-    console.error('Erreur lors de la mise à jour de la réclamation :', error);
+    console.error('Erreur lors de la mise à jour de la réclamation :', error.response || error.message);
     alert('Erreur lors de la mise à jour de la réclamation.');
+  } finally {
+    this.isLoading = false;
   }
 }
+
 
 
   }

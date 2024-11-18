@@ -97,7 +97,7 @@ export default {
     this.fetchPriorities();
     this.fetchCategories();
   },
-  methods: {
+ methods: {
     goBack() {
       this.$router.go(-1);
     },
@@ -126,6 +126,21 @@ export default {
       }
     },
     async addComplaint() {
+      const currentDate = new Date().toISOString().split('T')[0]; // Date actuelle au format "YYYY-MM-DD"
+      const { submissionDate, resolutionDate } = this.complaint;
+
+      // Validation de la date de soumission
+      if (submissionDate > currentDate) {
+        this.errorMessage = 'La date de soumission ne peut pas être dans le futur.';
+        return;
+      }
+
+      // Validation de la date de résolution
+      if (resolutionDate && resolutionDate < submissionDate) {
+        this.errorMessage = 'La date de résolution ne peut pas être antérieure à la date de soumission.';
+        return;
+      }
+
       try {
         await axios.post('http://localhost:3000/api/complaints', this.complaint);
         alert('Réclamation ajoutée avec succès.');
@@ -136,6 +151,7 @@ export default {
       }
     }
   }
+
 };
 </script>
 

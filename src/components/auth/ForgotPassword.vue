@@ -1,68 +1,59 @@
 <template>
   <div class="login-container">
-    <h2>Connexion</h2>
+    <h2>Mot de passe oublié</h2>
 
-    <!-- Message d'erreur -->
+    <!-- Message d'alerte en cas d'erreur -->
     <div v-if="errorMessage" class="alert alert-danger">
-      {{ authStore.message }}
+      {{ errorMessage }}
     </div>
 
     <!-- Message de succès -->
     <div v-if="successMessage" class="alert alert-success">
-      {{ authStore.message }}
+      {{ successMessage }}
     </div>
 
     <form @submit.prevent="onSubmit">
-      <label>Email :</label>
+      <label>Email:</label>
       <input v-model="email" type="email" placeholder="Entrez votre email" required />
 
-      <label>Mot de passe :</label>
-      <input v-model="password" type="password" placeholder="Entrez votre mot de passe" required />
-
-      <button type="submit" :disabled="authStore.isLoading">
-        <span v-if="authStore.isLoading">Chargement...</span>
-        <span v-else>Connexion</span>
-      </button>
+      <button type="submit">Envoyer</button>
     </form>
 
-    <p @click="forgotPassword" class="forgot-password-link">Mot de passe oublié ?</p>
+    <!-- Lien pour retourner à la page de connexion -->
+    <p @click="goToLogin" class="forgot-password-link">Retour à la connexion</p>
   </div>
 </template>
 
 <script>
-import { useAuthStore } from '/src/store/authStore';
-import { ref, computed } from 'vue';
+import { ref } from 'vue';
 import { useRouter } from 'vue-router';
+import { useAuthStore } from '/src/store/authStore';
 
 export default {
   setup() {
     const email = ref('');
-    const password = ref('');
+    const errorMessage = ref('');
+    const successMessage = ref('');
     const authStore = useAuthStore();
     const router = useRouter();
 
-    const errorMessage = computed(() => authStore.message && authStore.message.includes('Erreur'));
-    const successMessage = computed(() => authStore.message && authStore.message.includes('Connexion réussie'));
-
     const onSubmit = async () => {
       try {
-        await authStore.login(email.value, password.value);
-
-        // Réinitialiser le formulaire si la connexion est réussie
-        if (authStore.isAuthenticated) {
-          email.value = '';
-          password.value = '';
-        }
+        // Appel à l'action du store pour mot de passe oublié
+        await authStore.forgotPassword(email.value);
+        errorMessage.value = ''; // Réinitialiser les erreurs
+        successMessage.value = 'Un lien de réinitialisation a été envoyé à votre adresse email.';
       } catch (error) {
-        console.error('Erreur lors de la soumission du formulaire :', error);
+        successMessage.value = ''; // Réinitialiser le message de succès
+        errorMessage.value = error.response?.data?.message || "Erreur lors de l'envoi du lien de réinitialisation.";
       }
     };
 
-    const forgotPassword = () => {
-      router.push({ name: 'ForgotPassword' });
+    const goToLogin = () => {
+      router.push({ name: 'Login' });
     };
 
-    return { email, password, onSubmit, errorMessage, successMessage, forgotPassword, authStore };
+    return { email, onSubmit, errorMessage, successMessage, goToLogin };
   },
 };
 </script>
@@ -72,40 +63,39 @@ export default {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   background-color: #2c3e50;
   padding: 20px;
   border-radius: 10px;
   color: #ecf0f1;
+  width: 100%;
   max-width: 400px;
   margin: 0 auto;
+  box-sizing: border-box;
 }
 
 label {
   margin-top: 10px;
+  color: #ecf0f1;
 }
 
 input {
   width: 100%;
   padding: 8px;
   margin-top: 5px;
-  border-radius: 5px;
   border: 1px solid #bdc3c7;
+  border-radius: 5px;
 }
 
 button {
   margin-top: 15px;
-  padding: 10px;
+  padding: 10px 15px;
   background-color: #34495e;
   color: #ecf0f1;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-button:disabled {
-  background-color: #95a5a6;
-  cursor: not-allowed;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {

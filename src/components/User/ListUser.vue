@@ -2,26 +2,30 @@
   <div class="list-user p-4 bg-custom-white rounded shadow-container">
     <h2 class="text-center mb-4 text-custom-dark">Liste des Utilisateurs</h2>
 
-    <!-- Recherche et ajout d'utilisateur -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-      <router-link to="/user/add" class="btn btn-success shadow-sm">
+    <!-- Barre de recherche et ajout d'utilisateur (visible uniquement pour Admin) -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4">
+      <router-link 
+        v-if="auth.userRole === 'admin'"
+
+        to="/user/add" 
+        class="btn btn-success shadow-sm mb-2 mb-md-0"
+      >
         <i class="fas fa-plus"></i> Ajouter un Utilisateur
       </router-link>
-      <div class="d-flex align-items-center">
+      <div class="input-group" style="max-width: 400px;">
         <input 
           type="text" 
           v-model="searchQuery" 
-          class="form-control me-2 rounded-pill shadow-sm" 
-          placeholder="Rechercher un utilisateur..." 
-          style="width: 80%;"
+          class="form-control rounded-pill shadow-sm" 
+          placeholder="Rechercher un utilisateur..."
         />
-        <button class="btn btn-outline-secondary shadow-sm" @click="searchUser">
+        <button class="btn btn-outline-secondary shadow-sm ms-2" @click="searchUser">
           <i class="fas fa-search"></i>
         </button>
       </div>
     </div>
 
-    <!-- Table des utilisateurs avec ombre -->
+    <!-- Table des utilisateurs -->
     <div class="table-responsive">
       <table class="table table-hover table-striped align-middle shadow-sm">
         <thead class="bg-primary text-white">
@@ -39,24 +43,33 @@
             <td>{{ user.name }}</td>
             <td>{{ user.email }}</td>
             <td>{{ user.role }}</td>
-            <td>
+            <td class="d-flex justify-content-center">
+              <!-- Bouton Détails -->
               <router-link 
                 :to="`/home/user/detail/${user.id}`" 
-                class="btn btn-primary btn-sm shadow-sm"
+                class="btn btn-primary btn-sm shadow-sm me-2"
               >
-                <i class="fas fa-eye"></i> 
+                <i class="fas fa-eye"></i>
               </router-link>
+
+              <!-- Bouton Modifier (visible uniquement pour Admin) -->
               <router-link 
+                v-if="auth.userRole === 'admin'"
+
                 :to="`/home/user/update/${user.id}`" 
-                class="btn btn-info btn-sm shadow-sm ms-2"
+                class="btn btn-info btn-sm shadow-sm me-2"
               >
-                <i class="fas fa-edit"></i> 
+                <i class="fas fa-edit"></i>
               </router-link>
+
+              <!-- Bouton Supprimer (visible uniquement pour Admin) -->
               <button 
-                class="btn btn-danger btn-sm shadow-sm ms-2" 
+                v-if="auth.userRole === 'admin'"
+
+                class="btn btn-danger btn-sm shadow-sm" 
                 @click="confirmDeleteUser(user.id)"
               >
-                <i class="fas fa-trash"></i> 
+                <i class="fas fa-trash"></i>
               </button>
             </td>
           </tr>
@@ -68,6 +81,7 @@
 
 <script>
 import axios from 'axios';
+import { useAuthStore } from '/src/store/authStore';
 
 export default {
   data() {
@@ -77,13 +91,16 @@ export default {
     };
   },
   computed: {
+    auth() {
+      return useAuthStore();
+    },
     filteredUsers() {
       return this.users.filter(user =>
         user.name.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         user.email.toLowerCase().includes(this.searchQuery.toLowerCase()) ||
         user.role.toLowerCase().includes(this.searchQuery.toLowerCase())
       );
-    }
+    },
   },
   mounted() {
     this.fetchUsers();
@@ -92,19 +109,7 @@ export default {
     async fetchUsers() {
       try {
         const response = await axios.get('http://localhost:3000/api/users');
-        
-        // Inspect the structure of the response
-        console.log('Response Data:', response.data);
-
-        // Assuming response.data is an object with a "data" field containing the array
         this.users = Array.isArray(response.data) ? response.data : response.data.data;
-
-        // Make sure users is an array before filtering
-        if (!Array.isArray(this.users)) {
-          console.error('Erreur: Les utilisateurs ne sont pas un tableau');
-          return;
-        }
-        
       } catch (error) {
         console.error('Erreur lors de la récupération des utilisateurs:', error);
       }
@@ -117,7 +122,7 @@ export default {
     async deleteUser(id) {
       try {
         await axios.delete(`http://localhost:3000/api/users/${id}`);
-        this.fetchUsers(); // Refresh the user list
+        this.fetchUsers();
         alert('Utilisateur supprimé avec succès.');
       } catch (error) {
         console.error('Erreur lors de la suppression de l\'utilisateur:', error);
@@ -130,26 +135,17 @@ export default {
 };
 </script>
 
-
 <style scoped>
-.table th, .table td {
+.table th,
+.table td {
   text-align: center;
   vertical-align: middle;
 }
 .table-hover tbody tr:hover {
   background-color: #f8f9fa;
 }
-.btn {
-  transition: transform 0.2s;
-}
-.btn:hover {
-  transform: translateY(-2px);
-}
 .shadow-sm {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-.bg-light {
-  background-color: #f8f9fa !important;
 }
 h2 {
   font-weight: bold;
@@ -158,9 +154,7 @@ h2 {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 .shadow-container {
-  background-color: #f8f9fa;
-  width: 80%; /* Largeur à 80% */
-  margin: 0 auto; /* Centrer le conteneur */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre autour du conteneur */
+  width: 90%;
+  margin: 0 auto;
 }
 </style>

@@ -3,7 +3,9 @@
     <!-- Barre de navigation fixe -->
     <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#" @click.prevent="navigateToDashboard">Complaints Manager</a>
+        <a class="navbar-brand" href="#" @click.prevent="navigateToDashboard">
+          <i class="fa-solid fa-house"></i> Complaints Manager
+        </a>
 
         <button
           class="navbar-toggler"
@@ -18,23 +20,30 @@
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <!-- <li class="nav-item">
-              <router-link to="/" class="nav-link">Accueil</router-link>
-            </li> -->
             <li class="nav-item">
-              <router-link to="/user" class="nav-link">Utilisateurs</router-link>
+              <router-link to="/user" class="nav-link">
+                <i class="fa-solid fa-users"></i> Utilisateurs
+              </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/client" class="nav-link">Clients</router-link>
+              <router-link to="/client" class="nav-link">
+                <i class="fa-solid fa-user-tie"></i> Clients
+              </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/complaint" class="nav-link">Plaintes</router-link>
+              <router-link to="/complaint" class="nav-link">
+                <i class="fa-solid fa-comments"></i> Plaintes
+              </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/priority" class="nav-link">Priorités</router-link>
+              <router-link to="/priority" class="nav-link">
+                <i class="fa-solid fa-flag"></i> Priorités
+              </router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/category" class="nav-link">Catégories</router-link>
+              <router-link to="/category" class="nav-link">
+                <i class="fa-solid fa-list"></i> Catégories
+              </router-link>
             </li>
           </ul>
           <div class="d-flex align-items-center">
@@ -44,7 +53,9 @@
               <option value="en">English</option>
               <option value="es">Español</option>
             </select>
-            <button @click="logout" class="btn btn-outline-light ms-3">Déconnexion</button>
+            <button @click="logout" class="btn btn-outline-light ms-3">
+              <i class="fa-solid fa-sign-out-alt"></i> Déconnexion
+            </button>
           </div>
         </div>
       </div>
@@ -56,6 +67,7 @@
     </main>
   </div>
 </template>
+
 
 <script>
 import { useAuthStore } from '../store/authStore';

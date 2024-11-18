@@ -1,5 +1,9 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '../store/authStore';
+import ForgotPassword from '../components/auth/ForgotPassword.vue';
+import ResetPassword from '../components/auth/ResetPassword.vue';
+
+
 import Login from '../components/auth/Login.vue';
 import Dashboard from '../views/Dashboard.vue';
 import Home from '../views/Home.vue';
@@ -53,6 +57,8 @@ const requireAuth = (to, from, next) => {
 const routes = [
   { path: '/', redirect: { name: 'Login' } },
   { path: '/login', name: 'Login', component: Login },
+  { path: '/forgot-password', component: ForgotPassword, name: 'ForgotPassword' },
+  { path: '/reset-password/:token', component: ResetPassword, name: 'ResetPassword'},
 
   {
     path: '/home',

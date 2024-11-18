@@ -19,22 +19,20 @@
         <div>{{ formatDate(complaint.resolved_date) }}</div>
 
         <div><strong>Priorité :</strong></div>
-        <div>{{ complaint.priorityId || 'Non définie' }}</div>
+        <div>{{ getPriorityName(complaint.priorityId) }}</div>
 
         <div><strong>Catégorie :</strong></div>
-        <div>{{ complaint.categoryId || 'Non définie' }}</div>
+        <div>{{ getCategoryName(complaint.categoryId) }}</div>
 
-        <div><strong>Client ID :</strong></div>
-        <div>{{ complaint.clientId || 'Non défini' }}</div>
+        <div><strong>Client :</strong></div>
+        <div>{{ getClientName(complaint.clientId) }}</div>
       </div>
       <div class="text-center mt-4">
-  <router-link to="/complaint" class="btn btn-primary">Retour</router-link>
-</div>
-
+        <router-link to="/complaint" class="btn btn-primary">Retour</router-link>
+      </div>
     </div>
   </div>
 </template>
-
 
 <script>
 import axios from 'axios';
@@ -51,20 +49,64 @@ export default {
         priorityId: null,
         categoryId: null,
         clientId: null,
-      }
+      },
+      priorities: [],
+      categories: [],
+      clients: [],
     };
   },
 
   methods: {
     async fetchComplaintDetails() {
-      const id = this.$route.params.id; // Récupérer l'ID de la réclamation depuis les paramètres de la route
+      const id = this.$route.params.id;
       try {
         const response = await axios.get(`http://localhost:3000/api/complaints/${id}`);
-        this.complaint = response.data; // Assurez-vous que l'API renvoie les données correctes
-        console.log(this.complaint); // Vérifiez les données reçues dans la console
+        this.complaint = response.data;
       } catch (error) {
         console.error('Erreur lors de la récupération des détails de la réclamation:', error);
       }
+    },
+
+    async fetchPriorities() {
+      try {
+        const response = await axios.get('http://localhost:3000/api/priorities');
+        this.priorities = response.data;
+      } catch (error) {
+        console.error('Erreur lors de la récupération des priorités :', error);
+      }
+    },
+
+    async fetchCategories() {
+      try {
+        const response = await axios.get('http://localhost:3000/api/categories');
+        this.categories = response.data;
+      } catch (error) {
+        console.error('Erreur lors de la récupération des catégories :', error);
+      }
+    },
+
+    async fetchClients() {
+      try {
+        const response = await axios.get('http://localhost:3000/api/clients');
+        this.clients = response.data;
+      } catch (error) {
+        console.error('Erreur lors de la récupération des clients :', error);
+      }
+    },
+
+    getPriorityName(id) {
+      const priority = this.priorities.find((p) => p.id === id);
+      return priority ? priority.name : 'Non définie';
+    },
+
+    getCategoryName(id) {
+      const category = this.categories.find((c) => c.id === id);
+      return category ? category.name : 'Non définie';
+    },
+
+    getClientName(id) {
+      const client = this.clients.find((c) => c.id === id);
+      return client ? client.name : 'Non défini';
     },
 
     formatDate(date) {
@@ -83,11 +125,12 @@ export default {
     }
   },
 
-  created() {
-    this.fetchComplaintDetails();
-  }
+  async created() {
+    await Promise.all([this.fetchComplaintDetails(), this.fetchPriorities(), this.fetchCategories(), this.fetchClients()]);
+  },
 };
 </script>
+
 
 <style scoped>
 .detail-complaint {

@@ -124,19 +124,20 @@ export default {
     const isAuthenticated = computed(() => authStore.isAuthenticated);
 
     const logout = () => {
-      authStore.logout();
+      const userConfirmed = confirm("Êtes-vous sûr de vouloir vous déconnecter ?");
+      if (userConfirmed) {
+        authStore.logout();
+      }
     };
 
-    // Liste des cartes du tableau de bord avec les détails de chaque carte
-  const navigateToDashboard = () => {
-  router.push({ name: 'Dashboard' }); // Utiliser le nom de la route
-};
+    const navigateToDashboard = () => {
+      router.push({ name: 'Dashboard' }); // Utiliser le nom de la route
+    };
 
     const dashboardCards = [
       { title: 'Utilisateurs', statistic: '', icon: 'fas fa-users' },
       { title: 'Clients', statistic: '', icon: 'fas fa-building' },
       { title: 'Plaintes', statistic: '', icon: 'fas fa-exclamation-circle' },
-      // Ajoutez d'autres cartes ici
     ];
 
     return {
@@ -148,6 +149,7 @@ export default {
   },
 };
 </script>
+
 
 <style scoped>
 /* Styles globaux et de la navbar */
