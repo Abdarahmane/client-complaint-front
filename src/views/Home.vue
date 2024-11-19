@@ -47,12 +47,10 @@
             </li>
           </ul>
           <div class="d-flex align-items-center">
-            <select class="form-select lang-select" aria-label="Langue">
-              <option selected>Langue</option>
-              <option value="fr">Français</option>
-              <option value="en">English</option>
-              <option value="es">Español</option>
-            </select>
+            <!-- Lien vers le profil utilisateur -->
+            <router-link to="/home/profil" class="nav-link d-flex align-items-center">
+              <i class="fa-solid fa-user-circle"></i> Profil
+            </router-link>
             <button @click="logout" class="btn btn-outline-light ms-3">
               <i class="fa-solid fa-sign-out-alt"></i> Déconnexion
             </button>
@@ -67,7 +65,6 @@
     </main>
   </div>
 </template>
-
 
 <script>
 import { useAuthStore } from '../store/authStore';
@@ -87,7 +84,6 @@ export default {
 </script>
 
 <style scoped>
-/* Style pour le composant Home.vue, y compris la navbar fixe */
 .custom-navbar {
   background-color: #2c3e50;
   padding: 15px;
@@ -126,10 +122,9 @@ export default {
   border-color: #2c3e50;
 }
 
-/* Style du contenu principal avec défilement vertical */
 .main-content {
-  padding-top: 70px; /* Espace pour compenser la barre de navigation fixe */
-  height: calc(100vh - 70px); /* Hauteur ajustée */
-  overflow-y: auto; /* Activer le défilement vertical */
+  padding-top: 70px;
+  height: calc(100vh - 70px);
+  overflow-y: auto;
 }
 </style>

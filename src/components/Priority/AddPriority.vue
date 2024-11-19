@@ -10,12 +10,19 @@
           id="name" 
           class="form-control" 
           placeholder="Entrez le nom de la priorité" 
-          required 
         />
+        <!-- Affichage des erreurs liées au champ "name" -->
+        <div v-if="errors.name" class="text-danger mt-1">
+          {{ errors.name }}
+        </div>
       </div>
       <div class="d-flex justify-content-between">
         <button type="submit" class="btn btn-custom-primary">Ajouter</button>
         <button type="button" class="btn btn-outline-secondary" @click="goBack">Retour</button>
+      </div>
+      <!-- Affichage des erreurs générales -->
+      <div v-if="errors.general" class="text-danger mt-3">
+        {{ errors.general }}
       </div>
     </form>
   </div>
@@ -27,30 +34,56 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      priority: { name: '' }
+      priority: { name: '' },
+      errors: {}, // Stockage des erreurs
     };
   },
   methods: {
     async addPriority() {
       try {
+        // Réinitialiser les erreurs avant d'envoyer la requête
+        this.errors = {};
+
+        // Appel à l'API pour ajouter une priorité
         const response = await axios.post('http://localhost:3000/api/priorities', this.priority);
         console.log('Priorité ajoutée:', response.data);
 
-        // Clear the input field
+        // Réinitialiser le champ du formulaire
         this.priority.name = '';
 
-        // Redirect to the priorities list view
-        this.$router.push('/priority'); // Adjust the route as necessary
+        // Rediriger vers la liste des priorités
+        this.$router.push('/priority'); // Ajustez la route si nécessaire
       } catch (error) {
-        console.error('Erreur lors de l\'ajout de la priorité:', error);
+        if (error.response) {
+          const { status, data } = error.response;
+
+          // Gestion des erreurs spécifiques
+          if (status === 409) {
+            this.errors.name = data.error; // Message: "Une priorité avec ce nom existe déjà."
+          } else if (status === 400) {
+            // Gérer les erreurs de validation
+            data.errors.forEach((err) => {
+              if (err.param) {
+                this.errors[err.param] = err.msg;
+              } else {
+                this.errors.general = err.msg || 'Une erreur inattendue est survenue.';
+              }
+            });
+          } else {
+            this.errors.general = 'Une erreur s\'est produite sur le serveur.';
+          }
+        } else {
+          this.errors.general = 'Impossible de communiquer avec le serveur.';
+        }
       }
     },
     goBack() {
       this.$router.go(-1); // Retour à la page précédente
-    }
-  }
+    },
+  },
 };
 </script>
+
 
 <style scoped>
 .add-priority {

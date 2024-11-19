@@ -2,9 +2,13 @@
   <div class="list-priority p-4 bg-custom-#f8f9fa rounded shadow-container">
     <h2 class="text-center mb-4 text-custom-dark">Liste des Priorités</h2>
 
+    <div v-if="errorMessage" class="alert alert-danger">
+      {{ errorMessage }}
+    </div>
+
     <div class="d-flex justify-content-between align-items-center mb-4">
       <router-link to="/priority/add" class="btn btn-success shadow-sm">
-        <i class="fas fa-plus"></i> Ajouter Priorite
+        <i class="fas fa-plus"></i> Ajouter Priorité
       </router-link>
       <div class="d-flex align-items-center">
         <input 
@@ -14,9 +18,6 @@
           placeholder="Rechercher une priorité..." 
           style="width: 300px;"
         />
-        <button class="btn btn-outline-secondary shadow-sm" @click="searchPriority">
-          <i class="fas fa-search"></i>
-        </button>
       </div>
     </div>
 
@@ -68,6 +69,7 @@ export default {
     return {
       searchQuery: '',
       priorities: [],
+      errorMessage: '',  // Stockage du message d'erreur
     };
   },
   computed: {
@@ -86,9 +88,6 @@ export default {
         console.error('Erreur lors de la récupération des priorités:', error);
       }
     },
-    searchPriority() {
-      // Logique de recherche si nécessaire
-    },
     confirmDelete(id) {
       if (confirm('Voulez-vous vraiment supprimer cette priorité ?')) {
         this.deletePriority(id);
@@ -99,8 +98,12 @@ export default {
         await axios.delete(`http://localhost:3000/api/priorities/${id}`);
         console.log('Priorité supprimée:', id);
         this.priorities = this.priorities.filter(priority => priority.id !== id);
+        this.errorMessage = '';  // Réinitialiser l'erreur si la suppression est réussie
       } catch (error) {
         console.error('Erreur lors de la suppression de la priorité:', error);
+        this.errorMessage = error.response && error.response.data.error
+          ? error.response.data.error
+          : 'Une erreur inconnue s\'est produite lors de la suppression de la priorité.';
       }
     },
   },
@@ -132,6 +135,5 @@ export default {
   width: 80%; /* Largeur à 80% */
   margin: 0 auto; /* Centrer le conteneur */
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Ombre autour du conteneur */
-  
 }
 </style>

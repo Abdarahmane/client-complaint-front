@@ -15,10 +15,7 @@
           <input v-model="user.email" type="email" id="email" class="form-control" placeholder="Entrez un email valide" required />
         </div>
 
-        <div class="mb-3">
-          <label for="password" class="form-label">Mot de passe (laisser vide pour ne pas changer)</label>
-          <input v-model="user.password" type="password" id="password" class="form-control" placeholder="Entrez un nouveau mot de passe" />
-        </div>
+       
 
         <div class="mb-3">
           <label for="role" class="form-label">Rôle</label>
@@ -50,7 +47,7 @@ import axios from 'axios';
 export default {
   data() {
     return {
-      user: { id: '', name: '', email: '', password: '', role: '' }
+      user: { id: '', name: '', email: '',  role: '' }
     };
   },
   setup() {
@@ -67,9 +64,7 @@ export default {
         };
 
         // Ajouter le mot de passe uniquement s'il a été modifié
-        if (this.user.password) {
-          dataToUpdate.password = this.user.password;
-        }
+       
 
         await axios.put(`http://localhost:3000/api/users/${this.user.id}`, dataToUpdate);
         this.router.push('/user/list');

@@ -10,6 +10,17 @@ export const useAuthStore = defineStore('authStore', {
     message: '',
     isLoading: false, // Indicateur de chargement
   }),
+  async forgotPassword(email) {
+    try {
+      const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const response = await axios.post(`${BASE_URL}/auth/forgot-password`, { email });
+      return response.data.message; // Renvoyer le message de succès
+    } catch (error) {
+      console.error('Erreur forgotPassword:', error);
+      throw error; // Propager l'erreur
+    }
+  },
+  
   getters: {
     isAuthenticated: (state) => !!state.token,
     isAdmin: (state) => state.userRole === 'admin',

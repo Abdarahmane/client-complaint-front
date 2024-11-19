@@ -10,20 +10,22 @@
           </div>
           <div class="col-md-6">
             <label for="submissionDate" class="form-label">Date de Soumission</label>
-            <input v-model="complaint.submissionDate" id="submissionDate" type="date" class="form-control custom-input" required />
+            <input v-model="complaint.soumission_date" id="submissionDate" type="date" class="form-control custom-input" required />
           </div>
         </div>
 
         <div class="row mb-3">
-          <div class="col-md-6">
-            <label for="status" class="form-label">Statut</label>
-            <select v-model="complaint.status" id="status" class="form-select custom-input" required>
-              <option :value="status.value" v-for="status in statusOptions" :key="status.value">{{ status.label }}</option>
+           <div class="col-md-6">
+            <label for="statut" class="form-label">Statut</label>
+            <select v-model="complaint.statut" id="statut" class="form-select" required>
+              <option value="En attente">En attente</option>
+              <option value="Résolu">Résolu</option>
+              <option value="Rejeté">Rejeté</option>
             </select>
           </div>
           <div class="col-md-6">
             <label for="resolutionDate" class="form-label">Date de Résolution</label>
-            <input v-model="complaint.resolutionDate" id="resolutionDate" type="date" class="form-control custom-input" />
+            <input v-model="complaint.resolved_date" id="resolutionDate" type="date" class="form-control custom-input" />
           </div>
         </div>
 
@@ -74,9 +76,9 @@ export default {
     return {
       complaint: {
         description: '',
-        submissionDate: '',
-        status: 'pending',
-        resolutionDate: '',
+        soumission_date: '',
+        statut: 'En attente',
+        resolved_date: '',
         priorityId: null,
         categoryId: null,
         clientId: null
@@ -86,9 +88,9 @@ export default {
       categories: [],
       errorMessage: '',
       statusOptions: [
-        { value: 'pending', label: 'En attente' },
-        { value: 'resolved', label: 'Résolue' },
-        { value: 'rejected', label: 'Rejetée' }
+        { value: 'En attente', label: 'En attente' },
+        { value: 'Résolue', label: 'Résolue' },
+        { value: 'Rejetée', label: 'Rejetée' }
       ]
     };
   },
@@ -125,31 +127,58 @@ export default {
         console.error('Erreur lors de la récupération des catégories :', error);
       }
     },
-    async addComplaint() {
-      const currentDate = new Date().toISOString().split('T')[0]; // Date actuelle au format "YYYY-MM-DD"
-      const { submissionDate, resolutionDate } = this.complaint;
+   async addComplaint() {
+  const currentDate = new Date().toISOString().split('T')[0]; // Date actuelle au format "YYYY-MM-DD"
+  const { description, soumission_date, resolved_date, priorityId, categoryId, clientId } = this.complaint;
 
-      // Validation de la date de soumission
-      if (submissionDate > currentDate) {
-        this.errorMessage = 'La date de soumission ne peut pas être dans le futur.';
-        return;
-      }
+  // Réinitialiser le message d'erreur
+  this.errorMessage = '';
 
-      // Validation de la date de résolution
-      if (resolutionDate && resolutionDate < submissionDate) {
-        this.errorMessage = 'La date de résolution ne peut pas être antérieure à la date de soumission.';
-        return;
-      }
+  // Vérifications des champs obligatoires
+  if (!description.trim()) {
+    this.errorMessage = 'La description est obligatoire.';
+    return;
+  }
+  if (!soumission_date) {
+    this.errorMessage = 'La date de soumission est obligatoire.';
+    return;
+  }
+  if (!priorityId) {
+    this.errorMessage = 'La priorité est obligatoire.';
+    return;
+  }
+  if (!categoryId) {
+    this.errorMessage = 'La catégorie est obligatoire.';
+    return;
+  }
+  if (!clientId) {
+    this.errorMessage = 'Le client est obligatoire.';
+    return;
+  }
 
-      try {
-        await axios.post('http://localhost:3000/api/complaints', this.complaint);
-        alert('Réclamation ajoutée avec succès.');
-        this.$router.push('/complaint');
-      } catch (error) {
-        this.errorMessage = error.response?.data?.message || 'Erreur inconnue lors de l\'ajout de la réclamation';
-        console.error('Erreur lors de l\'ajout de la réclamation :', error);
-      }
-    }
+  // Validation de la date de soumission
+  if (soumission_date > currentDate) {
+    this.errorMessage = 'La date de soumission ne peut pas être dans le futur.';
+    return;
+  }
+
+  // Validation de la date de résolution
+  if (resolved_date && resolved_date < soumission_date) {
+    this.errorMessage = 'La date de résolution ne peut pas être antérieure à la date de soumission.';
+    return;
+  }
+
+  try {
+    // Requête pour ajouter la réclamation
+    await axios.post('http://localhost:3000/api/complaints', this.complaint);
+    alert('Réclamation ajoutée avec succès.');
+    this.$router.push('/complaint');
+  } catch (error) {
+    this.errorMessage = error.response?.data?.message || 'Erreur inconnue lors de l\'ajout de la réclamation';
+    console.error('Erreur lors de l\'ajout de la réclamation :', error);
+  }
+}
+
   }
 
 };

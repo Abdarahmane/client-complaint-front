@@ -15,9 +15,7 @@
           placeholder="Rechercher une réclamation..." 
           style="width: 300px;"
         />
-        <button class="btn btn-outline-secondary shadow-sm" @click="searchComplaint">
-          <i class="fas fa-search"></i> 
-        </button>
+        
       </div>
     </div>
 

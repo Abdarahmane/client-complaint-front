@@ -19,9 +19,7 @@
           class="form-control rounded-pill shadow-sm" 
           placeholder="Rechercher un utilisateur..."
         />
-        <button class="btn btn-outline-secondary shadow-sm ms-2" @click="searchUser">
-          <i class="fas fa-search"></i>
-        </button>
+        
       </div>
     </div>
 

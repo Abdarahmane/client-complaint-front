@@ -2,7 +2,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import { useAuthStore } from '../store/authStore';
 import ForgotPassword from '../components/auth/ForgotPassword.vue';
 import ResetPassword from '../components/auth/ResetPassword.vue';
-
+import Profil from '../views/Profil.vue'
 
 import Login from '../components/auth/Login.vue';
 import Dashboard from '../views/Dashboard.vue';
@@ -101,6 +101,8 @@ const routes = [
       { path: 'user/list', name: 'ListUser', component: ListUser },
       { path: 'user/update/:id', name: 'UpdateUser', component: UpdateUser },
       { path: 'user/detail/:id', name: 'DetailUser', component: DetailUser },
+      { path: 'profil', name: 'Profil', component: Profil },
+
     ],
   },
 

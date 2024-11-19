@@ -14,9 +14,7 @@
           placeholder="Rechercher une catégorie..." 
           style="width: 350px;"
         />
-        <button class="btn btn-outline-secondary shadow-sm" @click="searchCategory">
-          <i class="fas fa-search"></i>
-        </button>
+        
       </div>
     </div>
 

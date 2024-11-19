@@ -15,9 +15,7 @@
           placeholder="Rechercher un client..." 
           style="width: 80%;"
         />
-        <button class="btn btn-outline-secondary shadow-sm" @click="searchClient">
-          <i class="fas fa-search"></i>
-        </button>
+    
       </div>
     </div>
 

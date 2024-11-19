@@ -14,15 +14,23 @@
           id="name" 
           class="form-control shadow-sm" 
           placeholder="Entrez le nom de la catégorie" 
-          required 
         />
+        <!-- Afficher un message d'erreur si le champ est vide -->
+        <div v-if="errors.name" class="text-danger mt-1">
+          {{ errors.name }}
+        </div>
       </div>
       <button type="submit" class="btn btn-custom-primary shadow-sm">
         <i class="fas fa-save"></i> Enregistrer
       </button>
     </form>
+    <div v-if="errors.general" class="text-danger mt-3">
+      {{ errors.general }}
+    </div>
   </div>
 </template>
+
+
 
 <script>
 import axios from 'axios';
@@ -31,31 +39,59 @@ export default {
   data() {
     return {
       category: { name: '' }, // Initialisation pour éviter une erreur dans v-model
+      errors: {}, // Gestion des erreurs
     };
   },
   mounted() {
     this.fetchCategory(); // Charger la catégorie actuelle
   },
   methods: {
+    // Récupérer les données actuelles de la catégorie
     async fetchCategory() {
       try {
         const response = await axios.get(`http://localhost:3000/api/categories/${this.$route.params.id}`);
         this.category = response.data;
       } catch (error) {
+        this.errors.general = "Impossible de charger les données de la catégorie.";
         console.error("Erreur lors de la récupération de la catégorie:", error);
       }
     },
+    // Mettre à jour la catégorie
     async updateCategory() {
+      // Réinitialiser les erreurs
+      this.errors = {};
+
+      // Vérifier si le champ "name" est vide
+      if (!this.category.name.trim()) {
+        this.errors.name = "Le nom de la catégorie ne doit pas être vide.";
+        return; // Empêcher l'envoi si le champ est invalide
+      }
+
       try {
         await axios.put(`http://localhost:3000/api/categories/${this.$route.params.id}`, this.category);
         this.$router.push('/category/list'); // Redirection après la mise à jour
       } catch (error) {
+        if (error.response) {
+          const { status, data } = error.response;
+
+          // Gestion des erreurs spécifiques
+          if (status === 400) {
+            this.errors.name = data.error || "Erreur de validation.";
+          } else if (status === 404) {
+            this.errors.general = "La catégorie n'existe pas.";
+          } else {
+            this.errors.general = "Une erreur inattendue s'est produite.";
+          }
+        } else {
+          this.errors.general = "Impossible de communiquer avec le serveur.";
+        }
         console.error("Erreur lors de la mise à jour de la catégorie:", error);
       }
     },
   },
 };
 </script>
+
 
 <style scoped>
 /* Styles alignés avec AddCategory.vue */

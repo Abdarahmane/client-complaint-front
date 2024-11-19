@@ -1,28 +1,34 @@
 <template>
-  <div class="add-category p-4 bg-custom-white rounded shadow-sm position-relative">
-    <!-- Bouton de retour -->
-    <router-link to="/category/list" class="btn btn-secondary back-button">
-      <i class="fas fa-arrow-left"></i> Retour
-    </router-link>
-
-    <h3 class="text-custom-dark mb-4">Ajouter une Catégorie</h3>
-    <form @submit.prevent="addCategory">
-      <div class="mb-3">
-        <label for="name" class="form-label text-custom-dark">Nom</label>
+  <div class="add-category">
+    <h2 class="text-center text-custom-dark">Ajouter une Catégorie</h2>
+    <form @submit.prevent="addCategory" class="form-container">
+      <div class="mb-4">
+        <label for="name" class="form-label">Nom</label>
         <input 
           v-model="category.name" 
+          type="text" 
           id="name" 
-          class="form-control shadow-sm" 
+          class="form-control" 
           placeholder="Entrez le nom de la catégorie" 
-          required 
+          aria-label="Nom de la catégorie"
         />
+        <!-- Affichage des erreurs liées au champ "name" -->
+        <div v-if="errors.name" class="text-danger mt-1">
+          {{ errors.name }}
+        </div>
       </div>
-      <button type="submit" class="btn btn-custom-primary shadow-sm">
-        <i class="fas fa-plus"></i> Ajouter
-      </button>
+      <div class="d-flex justify-content-between">
+        <button type="submit" class="btn btn-custom-primary">Ajouter</button>
+        <button type="button" class="btn btn-outline-secondary" @click="goBack">Retour</button>
+      </div>
+      <!-- Affichage des erreurs générales -->
+      <div v-if="errors.general" class="text-danger mt-3">
+        {{ errors.general }}
+      </div>
     </form>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -31,19 +37,50 @@ export default {
   data() {
     return {
       category: { name: '' },
+      errors: {}, // Stockage des erreurs
     };
   },
   methods: {
     async addCategory() {
       try {
-        const newCategory = { name: this.category.name };
-        await axios.post('http://localhost:3000/api/categories', newCategory);
+        // Réinitialiser les erreurs avant d'envoyer la requête
+        this.errors = {};
 
-        this.category.name = ''; // Réinitialisez le champ
-        this.$router.push('/category/list'); // Redirige vers la liste des catégories
+        // Appel à l'API pour ajouter une catégorie
+        const response = await axios.post('http://localhost:3000/api/categories', this.category);
+        console.log('Catégorie ajoutée:', response.data);
+
+        // Réinitialiser le champ du formulaire
+        this.category.name = '';
+
+        // Rediriger vers la liste des catégories
+        this.$router.push('/category'); // Ajustez la route si nécessaire
       } catch (error) {
-        console.error("Erreur lors de l'ajout de la catégorie:", error);
+        if (error.response) {
+          const { status, data } = error.response;
+
+          // Gestion des erreurs spécifiques
+          if (status === 409) {
+            this.errors.name = data.error; // Message: "Une catégorie avec ce nom existe déjà."
+          } else if (status === 400) {
+            // Gérer les erreurs de validation
+            data.errors.forEach((err) => {
+              if (err.param) {
+                this.errors[err.param] = err.msg;
+              } else {
+                this.errors.general = err.msg || 'Une erreur inattendue est survenue.';
+              }
+            });
+          } else {
+            this.errors.general = 'Une erreur s\'est produite sur le serveur.';
+          }
+        } else {
+          this.errors.general = 'Impossible de communiquer avec le serveur.';
+        }
       }
+    },
+    goBack() {
+      this.$router.go(-1); // Retour à la page précédente
     },
   },
 };

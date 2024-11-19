@@ -145,6 +145,7 @@ export default {
       alert('La date de résolution ne peut pas être antérieure à la date de soumission.');
       return;
     }
+    
 
     this.isLoading = true;
 
