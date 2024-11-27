@@ -17,7 +17,17 @@
       <input v-model="email" type="email" placeholder="Entrez votre email" required />
 
       <label>Mot de passe :</label>
-      <input v-model="password" type="password" placeholder="Entrez votre mot de passe" required />
+      <div class="password-container">
+        <input
+          v-model="password"
+          :type="showPassword ? 'text' : 'password'"
+          placeholder="Entrez votre mot de passe"
+          required
+        />
+        <span class="toggle-password" @click="togglePassword">
+          <i :class="showPassword ? 'fa fa-eye-slash' : 'fa fa-eye'"></i>
+        </span>
+      </div>
 
       <button type="submit" :disabled="authStore.isLoading">
         <span v-if="authStore.isLoading">Chargement...</span>
@@ -29,6 +39,7 @@
   </div>
 </template>
 
+
 <script>
 import { useAuthStore } from '/src/store/authStore';
 import { ref, computed } from 'vue';
@@ -38,17 +49,23 @@ export default {
   setup() {
     const email = ref('');
     const password = ref('');
+    const showPassword = ref(false); // État pour contrôler l'affichage du mot de passe
     const authStore = useAuthStore();
     const router = useRouter();
 
+    // Calcul des messages d'erreur et de succès
     const errorMessage = computed(() => authStore.message && authStore.message.includes('Erreur'));
     const successMessage = computed(() => authStore.message && authStore.message.includes('Connexion réussie'));
 
+    // Soumission du formulaire
     const onSubmit = async () => {
+      // Réinitialiser les messages précédents avant chaque soumission
+      authStore.message = '';
+
       try {
         await authStore.login(email.value, password.value);
 
-        // Réinitialiser le formulaire si la connexion est réussie
+        // Si la connexion est réussie, réinitialiser le formulaire
         if (authStore.isAuthenticated) {
           email.value = '';
           password.value = '';
@@ -58,14 +75,19 @@ export default {
       }
     };
 
+    const togglePassword = () => {
+      showPassword.value = !showPassword.value;
+    };
+
     const forgotPassword = () => {
       router.push({ name: 'ForgotPassword' });
     };
 
-    return { email, password, onSubmit, errorMessage, successMessage, forgotPassword, authStore };
+    return { email, password, showPassword, onSubmit, errorMessage, successMessage, togglePassword, forgotPassword, authStore };
   },
 };
 </script>
+
 
 <style scoped>
 .login-container {
@@ -87,9 +109,28 @@ label {
 input {
   width: 100%;
   padding: 8px;
+  padding-right: 40px; /* Espace pour l'icône */
   margin-top: 5px;
   border-radius: 5px;
   border: 1px solid #bdc3c7;
+}
+
+.password-container {
+  position: relative;
+  width: 100%;
+}
+
+.toggle-password {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  cursor: pointer;
+  color: #7f8c8d;
+}
+
+.toggle-password:hover {
+  color: #34495e;
 }
 
 button {

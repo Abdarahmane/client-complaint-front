@@ -1,6 +1,6 @@
 <template>
   <div class="list-category p-4 bg-custom-white rounded shadow-container">
-   <h2 class="text-center mb-4 text-custom-dark">Liste des Categories</h2>
+   <h2 class="text-center mb-4 text-custom-dark">Liste des Catégories</h2>
 
     <div class="d-flex justify-content-between align-items-center mb-4">
       <router-link to="/category/add" class="btn btn-success shadow-sm btn-add">
@@ -93,14 +93,23 @@ export default {
       }
     },
     async deleteCategory(id) {
-      try {
-        await axios.delete(`http://localhost:3000/api/categories/${id}`);
-        this.fetchCategories();
-        alert('Catégorie supprimée avec succès.');
-      } catch (error) {
-        console.error('Erreur lors de la suppression de la catégorie:', error);
-      }
-    },
+  try {
+    await axios.delete(`http://localhost:3000/api/categories/${id}`);
+    this.categories = this.categories.filter(category => category.id !== id);
+    alert('Catégorie supprimée avec succès.');
+  } catch (error) {
+    console.error('Erreur lors de la suppression de la catégorie :', error);
+
+    // Afficher le message d'erreur du backend
+    const errorMessage = error.response && error.response.data.error
+      ? error.response.data.error
+      : 'Une erreur inconnue s\'est produite lors de la suppression de la catégorie.';
+      
+    alert(errorMessage); // Afficher l'erreur à l'utilisateur
+  }
+}
+
+,
     searchCategory() {
       console.log('Recherche de catégorie:', this.searchQuery);
     },

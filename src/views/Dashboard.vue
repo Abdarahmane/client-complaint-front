@@ -3,7 +3,8 @@
     <!-- Barre de navigation en haut -->
     <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
       <div class="container-fluid">
-       <a class="navbar-brand" href="#" @click.prevent="navigateToDashboard">Complaints Manager</a>
+      <router-link to="/home/dashboard" class="navbar-brand"> <i class="fas fa-house"></i> Complaints Manager</router-link>
+
 
 
         <button
@@ -36,7 +37,7 @@
             </li>
             <li class="nav-item">
               <router-link to="/complaint" class="nav-link">
-                <i class="fas fa-exclamation-triangle"></i> Plaintes
+                <i class="fas fa-exclamation-triangle"></i> Réclamations
               </router-link>
             </li>
             <li class="nav-item">
@@ -88,7 +89,7 @@
           <div class="dashboard-card">
             <i class="fas fa-exclamation-circle card-icon"></i>
             <div class="card-details">
-              <h2>Plaintes</h2>
+              <h2>Réclamation</h2>
               
             </div>
           </div>

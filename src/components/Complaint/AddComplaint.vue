@@ -1,21 +1,29 @@
 <template>
   <div class="container">
     <div class="add-complaint rounded p-4 mt-5 mx-auto">
-      <h2 class="text-center mb-4">Ajouter des Réclamations</h2>
+      <h2 class="text-center mb-4">Ajouter une Réclamation</h2>
       <form @submit.prevent="addComplaint">
+        <!-- Description et Date de Soumission -->
         <div class="row mb-3">
           <div class="col-md-6">
             <label for="description" class="form-label">Description</label>
             <textarea v-model="complaint.description" id="description" class="form-control custom-input" required></textarea>
+            <small v-if="errorMessage && !complaint.description.trim()" class="text-danger">
+              La description est obligatoire.
+            </small>
           </div>
           <div class="col-md-6">
             <label for="submissionDate" class="form-label">Date de Soumission</label>
             <input v-model="complaint.soumission_date" id="submissionDate" type="date" class="form-control custom-input" required />
+            <small v-if="errorMessage && !complaint.soumission_date" class="text-danger">
+              La date de soumission est obligatoire.
+            </small>
           </div>
         </div>
 
+        <!-- Statut et Date de Résolution -->
         <div class="row mb-3">
-           <div class="col-md-6">
+          <div class="col-md-6">
             <label for="statut" class="form-label">Statut</label>
             <select v-model="complaint.statut" id="statut" class="form-select" required>
               <option value="En attente">En attente</option>
@@ -26,9 +34,13 @@
           <div class="col-md-6">
             <label for="resolutionDate" class="form-label">Date de Résolution</label>
             <input v-model="complaint.resolved_date" id="resolutionDate" type="date" class="form-control custom-input" />
+            <small v-if="errorMessage && complaint.resolved_date < complaint.soumission_date" class="text-danger">
+              La date de résolution ne peut pas être antérieure à la date de soumission.
+            </small>
           </div>
         </div>
 
+        <!-- Priorité et Catégorie -->
         <div class="row mb-3">
           <div class="col-md-6">
             <label for="priorityId" class="form-label">Priorité</label>
@@ -36,6 +48,9 @@
               <option value="">Sélectionnez une priorité</option>
               <option v-for="priority in priorities" :key="priority.id" :value="priority.id">{{ priority.name }}</option>
             </select>
+            <small v-if="errorMessage && !complaint.priorityId" class="text-danger">
+              La priorité est obligatoire.
+            </small>
           </div>
           <div class="col-md-6">
             <label for="categoryId" class="form-label">Catégorie</label>
@@ -43,9 +58,13 @@
               <option value="">Sélectionnez une catégorie</option>
               <option v-for="category in categories" :key="category.id" :value="category.id">{{ category.name }}</option>
             </select>
+            <small v-if="errorMessage && !complaint.categoryId" class="text-danger">
+              La catégorie est obligatoire.
+            </small>
           </div>
         </div>
 
+        <!-- Client -->
         <div class="row mb-3">
           <div class="col-md-6">
             <label for="clientId" class="form-label">Client</label>
@@ -53,20 +72,22 @@
               <option value="">Sélectionnez un client</option>
               <option v-for="client in clients" :key="client.id" :value="client.id">{{ client.name }}</option>
             </select>
+            <small v-if="errorMessage && !complaint.clientId" class="text-danger">
+              Le client est obligatoire.
+            </small>
           </div>
         </div>
 
+        <!-- Boutons -->
         <div class="d-flex justify-content-between">
           <button type="submit" class="btn btn-primary custom-btn">Ajouter</button>
           <button @click="goBack" class="btn btn-outline-primary custom-btn">Retour</button>
         </div>
       </form>
-      <div v-if="errorMessage" class="alert alert-danger mt-3">
-        {{ errorMessage }}
-      </div>
     </div>
   </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -139,6 +160,8 @@ export default {
     this.errorMessage = 'La description est obligatoire.';
     return;
   }
+
+  
   if (!soumission_date) {
     this.errorMessage = 'La date de soumission est obligatoire.';
     return;

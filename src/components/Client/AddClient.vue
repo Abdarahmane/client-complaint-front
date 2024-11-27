@@ -14,6 +14,7 @@
           placeholder="Entrez le nom du client"
           required
         />
+        <div v-if="errors.name" class="text-danger">{{ errors.name }}</div>
       </div>
       <div class="col-md-6 mb-3">
         <label for="email" class="form-label text-custom-dark">Email</label>
@@ -25,6 +26,7 @@
           placeholder="Entrez l'email du client"
           required
         />
+        <div v-if="errors.email" class="text-danger">{{ errors.email }}</div>
       </div>
       <div class="col-md-6 mb-3">
         <label for="phone" class="form-label text-custom-dark">Téléphone</label>
@@ -36,6 +38,7 @@
           placeholder="Entrez le numéro de téléphone"
           required
         />
+        <div v-if="errors.phone" class="text-danger">{{ errors.phone }}</div>
       </div>
       <div class="col-md-6 mb-3">
         <label for="address" class="form-label text-custom-dark">Adresse</label>
@@ -47,12 +50,13 @@
           placeholder="Entrez l'adresse"
           required
         />
+        <div v-if="errors.address" class="text-danger">{{ errors.address }}</div>
       </div>
       <div class="col-12 d-flex justify-content-between">
         <button type="submit" class="btn btn-custom-primary shadow-sm">
           <i class="fas fa-save"></i> Ajouter
         </button>
-        <button @click="goBack" type="button" class="btn btn-custom-primary shadow-sm">
+        <button @click="goBack" type="button" class="btn btn-custom-secondary shadow-sm">
           <i class="fas fa-arrow-left"></i> Retour
         </button>
       </div>
@@ -69,36 +73,38 @@ export default {
       name: '',
       email: '',
       phone: '',
-      address: ''
+      address: '',
+      errors: {}, // Pour stocker les erreurs de validation
     };
   },
   methods: {
-    async addClient() {
-      const newClient = {
-        name: this.name,
-        email: this.email,
-        phone: this.phone,
-        address: this.address
-      };
-
-      try {
-        await axios.post('http://localhost:3000/api/clients', newClient);
-        this.resetForm();
-        this.$router.push('/client/list');
-      } catch (error) {
-        console.error("Erreur lors de l'ajout du client:", error);
-      }
-    },
-    resetForm() {
-      this.name = '';
-      this.email = '';
-      this.phone = '';
-      this.address = '';
-    },
-    goBack() {
-      this.$router.back();
+   async addClient() {
+  try {
+    const newClient = {
+      name: this.name,
+      email: this.email,
+      phone: this.phone,
+      address: this.address,
+    };
+    await axios.post('http://localhost:3000/api/clients', newClient);
+    this.$router.push('/client/list'); // Redirige vers la liste des clients
+  } catch (error) {
+    if (error.response && error.response.data.erreurs) {
+      // Utilise path au lieu de param pour mapper les erreurs
+      this.errors = error.response.data.erreurs.reduce((acc, curr) => {
+        acc[curr.path] = curr.msg; // path est utilisé pour identifier les champs
+        return acc;
+      }, {});
+    } else {
+      console.error('Erreur lors de l’ajout du client :', error);
     }
   }
+},
+
+    goBack() {
+      this.$router.back();
+    },
+  },
 };
 </script>
 

@@ -29,6 +29,11 @@
         </div>
       </form>
     </div>
+    
+    <!-- Afficher un message de chargement si l'utilisateur n'est pas encore chargé -->
+    <div v-else>
+      <p>Chargement des détails...</p>
+    </div>
   </div>
 </template>
 
@@ -39,30 +44,34 @@ import { useAuthStore } from '../../store/authStore';
 export default {
   data() {
     return {
-      user: null
+      user: null, // L'utilisateur sera initialisé à null
+      loading: true // Indicateur de chargement
     };
   },
   methods: {
     async fetchUser() {
-      const userId = this.$route.params.id;
-      const auth = useAuthStore();
-      try {
-        const response = await axios.get(`http://localhost:3000/api/users/${userId}`, {
-          headers: {
-            Authorization: `Bearer ${auth.token}`
-          }
-        });
-        this.user = response.data;
-      } catch (error) {
-        console.error('Erreur lors de la récupération des détails de l’utilisateur:', error);
+  const userId = this.$route.params.id;
+  const auth = useAuthStore();
+  try {
+    const response = await axios.get(`http://localhost:3000/api/users/${userId}`, {
+      headers: {
+        Authorization: `Bearer ${auth.token}`
       }
-    },
+    });
+    this.user = response.data.data; // Extraire les données utilisateur de l'objet `data`
+    this.loading = false; // Passer à false une fois les données récupérées
+  } catch (error) {
+    console.error('Erreur lors de la récupération des détails de l’utilisateur:', error);
+    this.loading = false;
+  }
+}
+,
     goBack() {
       this.$router.push('/user/list');
     }
   },
   created() {
-    this.fetchUser();
+    this.fetchUser(); // Récupérer les données utilisateur au moment de la création du composant
   }
 };
 </script>

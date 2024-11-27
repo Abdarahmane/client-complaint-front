@@ -142,17 +142,26 @@ export default {
 .table-hover tbody tr:hover {
   background-color: #f8f9fa;
 }
+.btn {
+  transition: transform 0.2s;
+}
+.btn:hover {
+  transform: translateY(-2px);
+}
 .shadow-sm {
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-}
-h2 {
-  font-weight: bold;
-}
-.table-responsive {
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 .shadow-container {
   width: 90%;
   margin: 0 auto;
+  background-color: #f8f9fa;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+h2 {
+  font-weight: bold;
+  color: #343a40;
+}
+.alert {
+  margin-top: 20px;
 }
 </style>

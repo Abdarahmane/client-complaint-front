@@ -26,6 +26,9 @@
 
         <div><strong>Client :</strong></div>
         <div>{{ getClientName(complaint.clientId) }}</div>
+
+        <div><strong>Utilisateur Assigné :</strong></div>
+        <div>{{ getUserName(complaint.userId) }}</div>
       </div>
       <div class="text-center mt-4">
         <router-link to="/complaint" class="btn btn-primary">Retour</router-link>
@@ -49,10 +52,12 @@ export default {
         priorityId: null,
         categoryId: null,
         clientId: null,
+        userId: null, // Pour l'utilisateur assigné
       },
       priorities: [],
       categories: [],
       clients: [],
+      users: [], // Liste des utilisateurs
     };
   },
 
@@ -94,6 +99,15 @@ export default {
       }
     },
 
+    async fetchUsers() {
+      try {
+        const response = await axios.get('http://localhost:3000/api/users');
+        this.users = response.data;
+      } catch (error) {
+        console.error('Erreur lors de la récupération des utilisateurs :', error);
+      }
+    },
+
     getPriorityName(id) {
       const priority = this.priorities.find((p) => p.id === id);
       return priority ? priority.name : 'Non définie';
@@ -109,8 +123,20 @@ export default {
       return client ? client.name : 'Non défini';
     },
 
+    getUserName(id) {
+      if (!id) return 'Non assigné';
+      const user = this.users.find((u) => u.id === id);
+      return user ? user.name : 'Nom non disponible';
+    },
+
     formatDate(date) {
-      return date ? new Date(date).toLocaleDateString('fr-FR', { year: 'numeric', month: '2-digit', day: '2-digit' }) : 'Non définie';
+      return date
+        ? new Date(date).toLocaleDateString('fr-FR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+          })
+        : 'Non définie';
     },
 
     getStatus(status) {
@@ -119,18 +145,23 @@ export default {
         'Résolu': 'Résolu',
         'En cours': 'En cours',
         'Rejeté': 'Rejeté',
-        'Inconnu': 'Inconnu'
+        'Inconnu': 'Inconnu',
       };
       return statuses[status] || 'Inconnu';
-    }
+    },
   },
 
   async created() {
-    await Promise.all([this.fetchComplaintDetails(), this.fetchPriorities(), this.fetchCategories(), this.fetchClients()]);
+    await Promise.all([
+      this.fetchComplaintDetails(),
+      this.fetchPriorities(),
+      this.fetchCategories(),
+      this.fetchClients(),
+      this.fetchUsers(), // Charger les utilisateurs
+    ]);
   },
 };
 </script>
-
 
 <style scoped>
 .detail-complaint {
@@ -153,4 +184,3 @@ strong {
   color: #343a40;
 }
 </style>
-

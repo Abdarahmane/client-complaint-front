@@ -2,9 +2,6 @@
   <div class="update-client p-4 bg-custom-white rounded shadow-sm">
     <div class="d-flex justify-content-between align-items-center mb-4">
       <h2 class="text-custom-dark">Modifier un Client</h2>
-      <!-- <button @click="goBack" type="button" class="btn btn-custom-secondary shadow-sm">
-        <i class="fas fa-arrow-left"></i> Retour
-      </button> -->
     </div>
     <form @submit.prevent="updateClient" class="row g-3">
       <div class="col-md-6 mb-3">
@@ -17,6 +14,7 @@
           placeholder="Entrez le nom du client"
           required
         />
+        <div v-if="errors.name" class="text-danger">{{ errors.name }}</div>
       </div>
       <div class="col-md-6 mb-3">
         <label for="email" class="form-label text-custom-dark">Email</label>
@@ -28,17 +26,19 @@
           placeholder="Entrez l'email du client"
           required
         />
+        <div v-if="errors.email" class="text-danger">{{ errors.email }}</div>
       </div>
       <div class="col-md-6 mb-3">
         <label for="phone" class="form-label text-custom-dark">Téléphone</label>
         <input
           v-model="client.phone"
-          type="tel"
+          type="text"
           id="phone"
           class="form-control shadow-sm custom-input"
           placeholder="Entrez le numéro de téléphone"
           required
         />
+        <div v-if="errors.phone" class="text-danger">{{ errors.phone }}</div>
       </div>
       <div class="col-md-6 mb-3">
         <label for="address" class="form-label text-custom-dark">Adresse</label>
@@ -47,15 +47,16 @@
           type="text"
           id="address"
           class="form-control shadow-sm custom-input"
-          placeholder="Entrez l'adresse du client"
+          placeholder="Entrez l'adresse"
           required
         />
+        <div v-if="errors.address" class="text-danger">{{ errors.address }}</div>
       </div>
       <div class="col-12 d-flex justify-content-between">
         <button type="submit" class="btn btn-custom-primary shadow-sm">
           <i class="fas fa-save"></i> Enregistrer
         </button>
-        <button @click="goBack" type="button" class="btn btn-custom-primary shadow-sm">
+        <button @click="goBack" type="button" class="btn btn-custom-secondary shadow-sm">
           <i class="fas fa-arrow-left"></i> Retour
         </button>
       </div>
@@ -73,8 +74,9 @@ export default {
         name: '',
         email: '',
         phone: '',
-        address: ''
-      }
+        address: '',
+      },
+      errors: {}, // Pour stocker les erreurs de validation
     };
   },
   mounted() {
@@ -86,21 +88,30 @@ export default {
         const response = await axios.get(`http://localhost:3000/api/clients/${this.$route.params.id}`);
         this.client = response.data;
       } catch (error) {
-        console.error('Erreur lors de la récupération du client:', error);
+        console.error('Erreur lors de la récupération du client :', error);
       }
     },
-    async updateClient() {
-      try {
-        await axios.put(`http://localhost:3000/api/clients/${this.$route.params.id}`, this.client);
-        this.$router.push('/client/list');
-      } catch (error) {
-        console.error('Erreur lors de la mise à jour du client:', error);
-      }
-    },
-    goBack() {
-      this.$router.back();
+   async updateClient() {
+  try {
+    await axios.put(`http://localhost:3000/api/clients/${this.$route.params.id}`, this.client);
+    this.$router.push('/client/list'); // Redirige vers la liste des clients
+  } catch (error) {
+    if (error.response && error.response.data.erreurs) {
+      // Correction : Utilise `path` au lieu de `param`
+      this.errors = error.response.data.erreurs.reduce((acc, curr) => {
+        acc[curr.path] = curr.msg; // path est utilisé pour identifier les champs
+        return acc;
+      }, {});
+    } else {
+      console.error('Erreur lors de la mise à jour du client :', error);
     }
   }
+},
+
+    goBack() {
+      this.$router.back();
+    },
+  },
 };
 </script>
 

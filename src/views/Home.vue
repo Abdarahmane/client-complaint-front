@@ -1,11 +1,10 @@
 <template>
   <div id="home">
-    <!-- Barre de navigation fixe -->
     <nav class="navbar navbar-expand-lg navbar-dark custom-navbar fixed-top">
       <div class="container-fluid">
-        <a class="navbar-brand" href="#" @click.prevent="navigateToDashboard">
-          <i class="fa-solid fa-house"></i> Complaints Manager
-        </a>
+        <router-link to="/home/dashboard" class="navbar-brand">
+          <i class="fas fa-house"></i> Complaints Manager
+        </router-link>
 
         <button
           class="navbar-toggler"
@@ -18,48 +17,58 @@
         >
           <span class="navbar-toggler-icon"></span>
         </button>
+
         <div class="collapse navbar-collapse" id="navbarNav">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
               <router-link to="/user" class="nav-link">
-                <i class="fa-solid fa-users"></i> Utilisateurs
+                <i class="fas fa-users"></i> Utilisateurs
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/client" class="nav-link">
-                <i class="fa-solid fa-user-tie"></i> Clients
+                <i class="fas fa-building"></i> Clients
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/complaint" class="nav-link">
-                <i class="fa-solid fa-comments"></i> Plaintes
+                <i class="fas fa-exclamation-circle"></i> Réclamations
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/priority" class="nav-link">
-                <i class="fa-solid fa-flag"></i> Priorités
+                <i class="fas fa-star"></i> Priorités
               </router-link>
             </li>
             <li class="nav-item">
               <router-link to="/category" class="nav-link">
-                <i class="fa-solid fa-list"></i> Catégories
+                <i class="fas fa-th-list"></i> Catégories
               </router-link>
             </li>
           </ul>
+
           <div class="d-flex align-items-center">
+            <!-- Nom d'utilisateur connecté -->
+            <span class="nav-link-profil d-flex align-items-center me-3">
+              <i class="fa-solid fa-user"></i> {{ userName }}
+            </span>
+
             <!-- Lien vers le profil utilisateur -->
-            <router-link to="/home/profil" class="nav-link d-flex align-items-center">
-              <i class="fa-solid fa-user-circle"></i> Profil
+            <router-link
+              to="/home/profil"
+              class="nav-link nav-link-profil d-flex align-items-center"
+            >
+              <i class="fa-solid fa-id-badge"></i> Profil
             </router-link>
+
             <button @click="logout" class="btn btn-outline-light ms-3">
-              <i class="fa-solid fa-sign-out-alt"></i> Déconnexion
+              <i class="fas fa-sign-out-alt"></i> Déconnexion
             </button>
           </div>
         </div>
       </div>
     </nav>
 
-    <!-- Contenu principal avec router-view et défilement vertical -->
     <main class="container-fluid main-content">
       <router-view></router-view>
     </main>
@@ -67,16 +76,19 @@
 </template>
 
 <script>
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore } from "../store/authStore";
+import { computed } from "vue";
 
 export default {
   setup() {
     const authStore = useAuthStore();
+    const userName = computed(() => authStore.userName); // Utilisation de computed pour la réactivité
     const logout = () => {
       authStore.logout();
     };
 
     return {
+      userName,
       logout,
     };
   },
@@ -101,13 +113,31 @@ export default {
   color: #bdc3c7 !important;
   font-weight: 500;
   padding: 10px 15px;
-  transition: color 0.3s ease;
+  border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-.navbar-nav .nav-link:hover {
+/* Effet de focus et hover */
+.navbar-nav .nav-link:hover,
+.navbar-nav .nav-link:focus {
   color: #ecf0f1 !important;
-  background-color: #34495e;
+  background-color: #3b5998;
+}
+
+/* Lien de profil personnalisé */
+.nav-link-profil {
+  color: #ecf0f1 !important;
+  font-weight: bold;
+  padding: 10px 15px;
   border-radius: 5px;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.nav-link-profil:hover,
+.nav-link-profil:focus {
+  background-color: #ecf0f1;
+  color: #2c3e50 !important;
+  border: 1px solid #bdc3c7;
 }
 
 .btn-outline-light {
